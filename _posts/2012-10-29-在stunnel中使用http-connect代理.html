@@ -1,0 +1,25 @@
+---
+layout: post
+title: 在stunnel中使用HTTP Connect代理
+date: '2012-10-29T10:09:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/34536512202
+---
+<p>以往stunnel都是用来提供一个代理的。但在校园网里，国外的VPS实在是太慢了，直连的速度简直崩溃。于是我又打起搜狗代理的主意。</p>
+<p>昨天给某人配备和谐上网的时候，因为她公司的限制，把VPS上的stunnel监听端口改到443，于是使用搜狗代理也就可行了。</p>
+<p>不想使用第三方的代理软件，然后网上搜了一下，stunnel本身就支持代理，在client下设置一下就OK。</p>
+<p>原本的配置形式是</p>
+<pre>
+accept  = 127.0.0.1:8123
+connect = xxx.xxx.xxx.xxx:443
+</pre>
+<p>使用代理后则是</p>
+<pre>
+accept  = 127.0.0.1:8123
+connect = 127.0.0.1:8083
+protocol = connect
+protocolHost = xxx.xxx.xxx.xxx:443
+</pre>
+<p>xxx.xxx.xxx.xxx是VPS的地址，127.0.0.1:8083是本地的搜狗代理的地址。<br/>注意，按照source来源的说法，必须要先通过connect配置项连接到代理，然后再利用protocol配置项连接到最终的VPS。</p>
+<p>这样配置后，速度果然快了很多～</p>

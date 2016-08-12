@@ -1,0 +1,19 @@
+---
+layout: post
+title: APN Proxy的实现
+date: '2012-01-21T23:22:31+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/16227815835/apn-proxy
+---
+<p>有一个这样的<a href="http://falcop.com/" target="_blank">服务</a>，号称可以翻墙加速，主要作者<a href="http://twitter.com/paveo" target="_blank">@Paveo</a> 也不愿公开它的工作原理。现在我也实现了类似的。</p>
+<p>其实原理很简单，只不过门槛很高，至少需要一台国内的VPS。</p>
+<ol><li>要让国内的这台VPS处于翻墙状态，可以用OpenVPN来实现，也可以利用SSH做个代理。用SSH的话记得要转换成HTTP代理，Privoxy、Polipo、3proxy等都是可以的。</li>
+<li>需要一个共享软件，<a href="http://www.proxyplus.cz/" target="_blank">Proxy+</a>，如果只是自己用，估计免费版够了，否则请购买商业版……</li>
+<li>如果是用SSH的，需要设置Cascading为Non-ICP，并设为之前的HTTP代理；用OpenVPN方案的可以无视。</li>
+<li>需要设置Proxy+的过滤规则，Access List里Objects中，添加HTTPHeader类型的规则，我只想让塞班用户使用，于是加入名为Symbian内容为*Series60*，这样HTTP Header中有匹配到的就会放行。在Rule内加入Deny !Symbian，这样不符合规则的就会被拒绝访问。</li>
+<li><strong>最重要的</strong>：要能让自己继续访问管理页面。上面的规则会让自己也无法访问管理页面。添加一个Object，名为UP，类型为Parameter，内容为username:password（管理员用户和密码），再添加一个Object，名为IP，类型为ClientIP，内容为127.0.0.1。接着在Rule里第一条添加为Pass UP IP，放行服务器本地的访问。</li>
+</ol><p>至此，APN Proxy就只有HTTP Header符合规则的用户才能访问了。</p>
+<p>如果是要给其它手机用户使用，需要找出他们的HTTP Header的特征码，我是用服务器上装Fiddler来捕捉分析的。</p>
+<p>如果是可信赖的人用，OpenVPN可以配合<a href="http://code.google.com/p/chnroutes/" target="_blank">chnroutes</a>来避免国内网站访问过慢。</p>
+<p>最后吐槽一下UCWeb的内置域名代理支持，居然用的UA是Mozilla/5.0 (windows; U; Windows NT 5.1; zh-CN; rv:1.7.12) Gecko/20050919 Firefox/1.0.7</p>

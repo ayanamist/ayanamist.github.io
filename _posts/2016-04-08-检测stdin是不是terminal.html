@@ -1,0 +1,11 @@
+---
+layout: post
+title: 检测stdin是不是terminal
+date: '2016-04-08T11:28:31+08:00'
+tags:
+- stdin
+- tty
+- java
+tumblr_url: http://blog.ayanamist.com/post/142440622171
+---
+<p>一个常见的场景是，如果stdin有输入，则使用输入的数据进行处理，否则自行获取数据再处理。</p><p><a href="https://rosettacode.org/wiki/Check_input_device_is_a_terminal" target="_blank">https://rosettacode.org/wiki/Check_input_device_is_a_terminal</a> 这里列了很多语言的实现。<br/></p><p>java的实现参见 <a href="http://stackoverflow.com/a/23419451/522024" target="_blank">http://stackoverflow.com/a/23419451/522024</a> 这里，至少目前是需要jni介入的。</p>

@@ -1,0 +1,20 @@
+---
+layout: post
+title: iOS bug荟萃
+date: '2016-05-16T11:30:59+08:00'
+tags:
+- iOS
+- bug
+tumblr_url: http://blog.ayanamist.com/post/144433961391
+---
+<p>鉴于iOS的bug过多，从今天开始，记录遇到的所有bug：</p>
+
+<ol><li>来电时，屏幕会反复亮屏息屏，似乎是在息屏时用指纹解锁，快速进入桌面，那此时接通电话的界面不显示，铃声响，通知栏无提示，进入电话app是拨号界面，过一小会接通界面才会正常弹出来。</li>
+<li>如果在更新app时遇到苹果服务异常，导致app证书异常，则该app进入时会闪退，必须重启手机。</li>
+<li>下载或更新app时如果卡在转圈上，可以尝试进入iCloud设置界面，触发输入密码的动作，此时有很大概率恢复正常。或者始终使用翻墙线路进行下载或更新。</li>
+<li>中区账号卡在App Store美区，下载app提示Change Store，但Change完还是美区，Purchased里是空的；杀掉App Store无效；重启手机无效；登出再登录账号无效；最后在系统区域设置里将地区从美国改成中国后，恢复正常，再切换回美国依旧正常。</li>
+<li>部分app用着用着会突然发生触摸屏失效，已经发生在nPlayer、微信上；强杀app可以解决。</li>
+<li>更新或安装app时，有一定概率出现一个没有名字的图标，且无法删除；重启后会消失<img src="http://66.media.tumblr.com/01fef3781ae6ab29a0aadc89e773c743/tumblr_inline_o8i8s5YTpf1qe60vn_540.png" alt="screenshot"/></li>
+<li>关闭wifi时，如果刚好发生ap切换，有可能残留wifi图标；重新打开再关闭就好了。</li>
+<li>当有app需要更新时（在app store内有提醒），把app删掉，app store的角标不会消失，且永远也不会；关闭app store角标解决。</li>
+</ol>

@@ -1,0 +1,27 @@
+---
+layout: post
+title: 交叉编译OpenConnect
+date: '2014-12-10T13:12:12+08:00'
+tags:
+- openconnect
+- cross compile
+- mipsel
+tumblr_url: http://blog.ayanamist.com/post/104820927346
+---
+<p>这事的起因是感觉vpnc在路由器上速度太慢了，当然结果是发现OpenConnect一样慢……</p>
+
+<p>下面进入正题：</p>
+
+<ol><li>将交叉编译toolchain的bin目录添加到PATH环境变量中</li>
+<li>配置环境变量<code>CFLAGS="--static" LDFLAGS="-static -static-libgcc -static-libstdc++ "</code><br/>
+这里可以export，也可以在后面configure的过程中作为configure的参数。<br/>
+最关键的是CFLAGS的设置，之前没设这个，静态编译出来的玩意儿其实还是依赖了libc的（路由器上是uClibc），然后在路由器上会莫名其妙的<code>can't resolve symbol 'rand_r'</code>，搜了很久，都只提到了LDFLAGS的设置，最后在一个SO答案的<a href="http://stackoverflow.com/questions/7716075/how-do-i-do-a-static-build-with-uclibc#comment9394367_7716526" target="_blank">评论</a>里才找到这个，当然也怪我gcc学艺不精……</li>
+<li>编译zlib<br/><code>CROSS_PREFIX=mipsel-linux- ./configure --prefix=/jffs --static</code></li>
+<li>编译libxml2<br/><code>./configure --host=mipsel-linux --prefix=/jffs --without-c14n --without-catalog --without-debug --without-docbook --without-fexceptions --without-ftp --without-history --without-html --without-http --without-iso8859x --without-legacy --without-pattern --without-push --without-regexps --without-run-debug --without-sax1 --without-schemas --without-schematron --without-threads --without-valid --without-xinclude --without-xpath --without-xptr --without-zlib --without-lzma --without-coverage --without-python --enable-static --disable-shared</code></li>
+<li>编译OpenSSL<br/><code>./Configure --prefix=/jffs --cross-compile-prefix=mipsel-linux- no-shared mipsel-linux:gcc</code></li>
+<li>编译OpenConnect<br/><code>./configure --prefix=/jffs --host=mipsel-linux --disable-maintainer-mode --disable-shared --enable-static --disable-nls --with-vpnc-script=/etc/vpnc/vpnc-script --without-gnutls --without-openssl-version-check PKG_CONFIG_PATH=/jffs/lib/pkgconfig/</code></li>
+<li>file确认一下文件是statically linked，strip一下最终文件</li>
+<li>复制到路由器上运行，会被警告“没编译libiconv将导致奇怪的问题”，无视即可（或者你可以自己再编译一下libiconv，将增加最终文件1MiB多的大小）</li>
+<li>启动<br/><code>echo -n YOUR_PASS | /jffs/openconnect/sbin/openconnect --timestamp --syslog --base-mtu=1400 --no-proxy --script=/jffs/vpnc/vpnc-script --user=YOUR_USER --verbose --disable-ipv6 --passwd-on-stdin --no-cert-check YOUR_SERVER</code><br/>
+启动后依旧会报<code>Set up DTLS failed; using SSL instead</code>，无解……</li>
+</ol>

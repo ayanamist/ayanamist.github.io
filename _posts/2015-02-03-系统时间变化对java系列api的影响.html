@@ -1,0 +1,27 @@
+---
+layout: post
+title: 系统时间变化对Java系列API的影响
+date: '2015-02-03T21:34:17+08:00'
+tags:
+- java
+- time
+tumblr_url: http://blog.ayanamist.com/post/109974038796
+---
+<p>如这个<a href="http://stackoverflow.com/questions/5909574/java-bug-in-sleep-when-changing-os-time-any-workaround" target="_blank">SO问题</a>所讨论的，当系统时间被修改时，多个Java API会受到影响：当时间向过去调整，这些API的调用会出现类似hang住的情况：</p>
+
+<ul><li>Thread.sleep(long)</li>
+<li>Thread.sleep(long, int)</li>
+<li>Object.wait(long)</li>
+<li>Object.wait(long, int)</li>
+<li>Thread.join(long)</li>
+<li>Thread.join(long, int)</li>
+<li>LockSupport.parkNanos(long)</li>
+<li>java.util.Timer</li>
+<li>javax.swing.Timer</li>
+</ul><p>因为这些都是依赖<code>System.currentTimeMillis()</code>做定时调度实现的。</p>
+
+<p>讨论中给出了两个建议：</p>
+
+<ol><li>依赖<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/System.html#nanoTime--" target="_blank"><code>System.nanoTime()</code></a>，这个API返回的值不会受系统时间变化的影响。我能想到的是通过这个来衡量是否发生大幅度时间变化，并计算偏移量来进行修正，当然依旧无法避免卡住的问题；</li>
+<li>依赖外部不受影响的命令，例如<a href="http://linux.die.net/man/1/sleep" target="_blank"><code>sleep</code>命令</a>；</li>
+</ol>

@@ -1,0 +1,19 @@
+---
+layout: post
+title: Tornado小试
+date: '2012-10-25T13:39:00+08:00'
+tags:
+- Python
+- Tornado
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/34283406242
+---
+<p>今天把自己的<a href="https://github.com/ayanamist/sogou-proxy" target="_blank">搜狗代理项目</a>的代码用<a href="http://www.tornadoweb.org/" target="_blank">tornado</a>算是重写了一遍。代码行数从400行下降到200行，核心代码也只有50行左右，而且逻辑清楚了不少。</p>
+<p>相对于buggy的asyncore模块，tornado的接口非常的简洁有力</p>
+<pre code="python">
+self.read_until_close(callback=dummy_cb, streaming_callback=remote.write)
+remote.read_until_close(callback=dummy_cb, streaming_callback=self.write)
+</pre>
+<p>这样两行就写完了所有的数据交换，相对之前自己控制buffer实在是省事很多。</p>
+<p>而且tornado内部用了之前设想的用deque来做buffer，相信内存占用控制的也应该很不错。</p>
+<p>可以考虑下一个翻墙的项目用tornado来做客户端。</p>

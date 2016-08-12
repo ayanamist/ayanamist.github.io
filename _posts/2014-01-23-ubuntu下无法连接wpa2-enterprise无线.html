@@ -1,0 +1,22 @@
+---
+layout: post
+title: Ubuntu下无法连接WPA2 Enterprise无线
+date: '2014-01-23T10:29:00+08:00'
+tags:
+- Ubuntu
+- Linux
+- wireless
+tumblr_url: http://blog.ayanamist.com/post/74235336205
+---
+<p>公司无线是用WPA2 Enterprise+PEAP+MSCHAPv2的方式搭建的，在Windows上连接正常，在Ubuntu 13.10下却始终连不上。</p>
+
+<p>一开始我是用接有线的方式解决的，但实在有些不方便，今天又查了一下，是Network Manager的<a href="https://bugs.launchpad.net/ubuntu/+source/network-manager/+bug/1104476" target="_blank">一个已知问题</a>，可以看到影响到多个发行版本，其中Gentoo发布了一个r1解决了这个问题，而渣Gnome的开发人员也承认这点做的<a href="https://bugzilla.gnome.org/show_bug.cgi?id=702608#c17" target="_blank">确实不如Windows好</a>。</p>
+
+<p>临时解决方案是，关闭无线，修改<code>/etc/NetworkManager/system-connections/</code>下的文件，把里面的<code>system-ca-certs=true</code>改成false或删除掉这行，再打开无线就正常了。但只要Network Manager会重写那个文件，就会重新加上这行，导致连接再次连不上。</p>
+
+<p>半永久方案是，按<a href="http://www.divms.uiowa.edu/help/wireless/ubuntu1204.html" target="_blank">这个文章</a>，指定连接无线使用某个CA证书例如<code>/usr/share/ca-certificates/mozilla/AddTrust_External_Root.crt</code>（不一定是这个证书，至少在我这里无效），至少在我这里解决了问题。</p>
+
+<p>永久方案当然是backport那个补丁然后重新打包Network Manager（在Ubuntu下包名叫<code>network-manager-gnome</code>）。</p>
+
+<p>2014-03-28 Update: <del>Ubuntu 14.04已经使用了新版的Network Manager，解决了这个问题。</del>
+2014-05-08 Update: 虽然用了新版的包，但Ubuntu还是有这个问题，也不知道是怎么搞的……</p>

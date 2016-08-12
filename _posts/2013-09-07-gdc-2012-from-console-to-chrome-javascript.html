@@ -1,0 +1,120 @@
+---
+layout: post
+title: 'GDC 2012: From Console to Chrome - Javascript'
+date: '2013-09-07T12:18:00+08:00'
+tags:
+- javascript
+- v8
+tumblr_url: http://blog.ayanamist.com/post/60513043891
+---
+<p>对来源视频中涉及到V8引擎部分的总结。</p>
+
+<ul><li>JIT Compiler
+
+<ul><li>Numbers
+
+<ul><li>Small ints (SMIs)
+
+<ul><li>Immediate, fast</li>
+<li>31 bits on 32 bit machines OR on 32 bits x64</li>
+</ul></li>
+<li>64 bits &ldquo;heap numbers&rdquo;
+
+<ul><li>Won&rsquo;t fit in an SMI and is not local</li>
+<li>Wrapped and heap allocated</li>
+<li>Slightly slower</li>
+<li>Doubles <strong>may</strong> be optimized, no guarantees</li>
+</ul></li>
+</ul></li>
+<li>Arrays
+
+<ul><li>TypedArrays
+
+<ul><li>Uint32Array, Float64Array, etc</li>
+<li>Memory efficient, no boxing</li>
+</ul></li>
+<li>JS Arrays
+
+<ul><li>API allows operations not possible in C</li>
+<li>Backing storage: sparse vs. dense</li>
+<li>C-like array <strong>OR</strong> hash table (&ldquo;dictionary mode&rdquo;)</li>
+<li>Many factors switch backing, e.g. space efficiency</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Object Model
+
+<ul><li>Objects are associative arrays</li>
+<li>Large systems have structured data</li>
+<li>Hidden classes: Internal type system
+
+<ul><li>Group objects with same structure</li>
+<li>Shared across objects</li>
+<li>Expensive to generate once, cheap afterwards</li>
+</ul></li>
+<li>Property inline caching (IC)
+
+<ul><li>Check hidden class on property lookup</li>
+<li>First time fully generic lookup<br/>
+Remember where you found the property</li>
+<li>Generate new optimized code<br/>
+Next time, direct access</li>
+</ul></li>
+<li>Object properties storage
+
+<ul><li>directly on object</li>
+<li>array</li>
+<li>hash table &ldquo;dictionary mode&rdquo; <strong>&gt;_&lt;</strong></li>
+<li>What triggers dictionary mode?
+
+<ul><li>Too many properties <em>(around 30)</em></li>
+<li>Change property attributes</li>
+<li>Delete a property</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Optimizing Compiler
+
+<ul><li>Heavier operations than JIT compiler</li>
+<li>Warm up on fully-general path</li>
+<li>Profile for hot functions
+
+<ul><li>Non-deterministic sampling profiler</li>
+</ul></li>
+<li>Mine types, specialize
+
+<ul><li>New optimized code (inlining, licm, gvn)</li>
+<li>Speculative optimization</li>
+</ul></li>
+<li>Not all constructs are handled<br/>
+&ldquo;bailout&rdquo; == tried to optimize but quit<br/><em><code>V8 --trace-bailout</code></em><br/><em><code>V8 --trace-opt</code></em><br/><ul><li>Function too long</li>
+<li>TryCatch, ForIn, NonStringToString, etc <em>(may change)</em></li>
+</ul></li>
+<li>But those optimizations were speculative<br/>
+&ldquo;deopt&rdquo; == assumptions of fast path violated<br/><em><code>V8 --trace-deopt</code></em></li>
+<li>Javascriptisms: so elegant, so slow
+
+<ul><li><strong>Static and &ldquo;like C&rdquo; is often fast</strong></li>
+<li>Create a few well-defined object types</li>
+<li>Avoid objects with too many properties (&lt; 30)</li>
+<li>Feed your functions consisten data</li>
+<li>Don&rsquo;t use gigantic functions</li>
+<li><strong>Keep an eye on your code with V8 flag</strong></li>
+</ul></li>
+</ul></li>
+<li>Garbage Collector
+
+<ul><li>Two generations<br/><em><code>V8 --trace-gc</code></em>
+
+<ul><li>Young: small frequently collected space</li>
+<li>Old: longer-lived data</li>
+</ul></li>
+<li>Promotion <em>(between young and old)</em> is expensive<br/>
+Want very long or very short lived objects</li>
+<li>Release your references<br/>
+Execution contexts can hold onto references<br/>
+Closures can hold onto references</li>
+<li>Avoid GC stalls<br/>
+Use SMIs, scratchpads, update in place</li>
+</ul></li>
+</ul>

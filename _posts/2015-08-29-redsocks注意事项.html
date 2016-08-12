@@ -1,0 +1,10 @@
+---
+layout: post
+title: redsocks注意事项
+date: '2015-08-29T22:12:35+08:00'
+tags:
+- redsocks
+- iptables
+tumblr_url: http://blog.ayanamist.com/post/127863639736
+---
+<p>使用iptables时，redirect到的端口，对应的ip是和来源ip同一个网段的。</p><p>例如：路由器上192.168.1.0/24网络，那redsocks就必须要监听192.168.1.1，只监听127.0.0.1是不够的。</p>

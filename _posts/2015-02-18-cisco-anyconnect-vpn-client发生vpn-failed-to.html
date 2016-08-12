@@ -1,0 +1,18 @@
+---
+layout: post
+title: Cisco AnyConnect VPN Client发生VPN Failed to initialize connection subsystem错误
+date: '2015-02-18T18:07:52+08:00'
+tags:
+- anyconnect
+tumblr_url: http://blog.ayanamist.com/post/111363431241
+---
+<p>Cisco AnyConnect VPN Client连接时抛出错误VPN Failed to initialize connection subsystem，可以尝试以下几种修复方法：</p>
+
+<ol><li>IE中是否开启了offline模式，如果开启，需要恢复成online。</li>
+<li>注册表中<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings</code>添加字符串值<code>GlobalUserOffline</code>并设为<code>1</code>。</li>
+<li>找到<code>vpnui.exe</code>文件（一般在<code>C:\Program Files (x86)\Cisco\Cisco AnyConnect Secure Mobility Client\</code>），右键使用<code>Troubleshoot compatibility</code>，会提示使用win8兼容性，应用并保存。</li>
+</ol><p>我在执行完2、3两步后恢复正常了。</p>
+
+<p>2015-02-26 update:</p>
+
+<p>发现是<a href="http://support.microsoft.com/kb/3023607" target="_blank">KB3023607</a>的已知问题，安装对应的<a href="http://go.microsoft.com/?linkid=9876036" target="_blank">Microsoft Fix it 51033</a>即可</p>

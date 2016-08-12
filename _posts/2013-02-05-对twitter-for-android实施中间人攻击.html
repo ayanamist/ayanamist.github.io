@@ -1,0 +1,17 @@
+---
+layout: post
+title: 对Twitter for Android实施中间人攻击
+date: '2013-02-05T13:02:01+08:00'
+tags:
+- Twitter
+- Android
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/42334741954
+---
+<p>题目取的很邪恶，其实目的只是要挖掘一下Undocumented API罢了。但难度确实超乎想像的大。</p>
+<p>按照<a href="wiki.cacert.org/FAQ/ImportRootCert#Way_1:_on_Android_4.0_and_higher." target="_blank">这里</a>的说法，Android 4.0后，只要通过系统设置里的界面导入了证书，那就是默认全局信任的。但这个很明显在Twitter上是不成立的……只好翻开Twitter的smali码，找找怎么回事。</p>
+<p>先用SSL为关键字搜了一下，不是很多，都集中在com/twitter/android/network/ssl下面，其中b.smali写了会对api.twitter.com这个域名采用更严格的STRICT_HOSTNAME_VERIFIER，于是把verify方法的smali码全部删去，再把域名改成fuck.twitter.com。但还是不行。</p>
+<p>再翻到a.smali，发现是在枚举一个列表里的证书进行校验，于是联想到是不是后来手动安装的证书不在这个列表，于是把CA证书挪到了/etc/security/cacerts/下面，重启手机后，在系统的证书列表里已经能看到我的证书了，但还是失败……</p>
+<p>继续翻ssl目录的代码，翻到d.smali时，看到个changeit，咦，这不是Java证书存储常用的密码么，再往上看一眼，KeyStore.getInstance(&ldquo;BKS&rdquo;)和openRawResource，好吧丫是自带了个cacerts.bks，放到了res/raw/cacerts这个文件这里……</p>
+<p>用<a href="http://portecle.sourceforge.net/" target="_blank">Portecle</a>修改这个文件，导入Fiddler的CA证书，放回apk，再按上面修改好smali嘛，把dex文件也替换进来。签名安装。设代理为Fiddler的地址。成功看到各种API请求。</p>
+<p>不过费了这么大劲折腾，没有发现一点点有用的东西，Twitter不是说今年三月就停止1.0的API使用了么，怎么自己还在到处用！</p>

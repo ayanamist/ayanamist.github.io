@@ -1,0 +1,43 @@
+---
+layout: post
+title: Google App Engine SDK for Python改造
+date: '2012-10-20T01:41:00+08:00'
+tags:
+- Python
+- GAE
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/33901459434
+---
+<p>改造的原因主要是因为GFW的存在，导致无法顺畅的上传代码。通过环境变量的方式添加代理又略显麻烦，且在<a href="http://www.jetbrains.com/pycharm/" target="_blank">PyCharm</a>中无法使用。</p>
+<p>既然是改造，那肯定要修改SDK的源代码了。目前从简单考虑，只支持HTTP代理，以<a href="https://code.google.com/p/goagent/" target="_blank">GoAgent</a>为例。而且考虑到GoAgent的代理方式会造成证书不匹配的问题（因为SDK中用到的库都不支持<a href="http://en.wikipedia.org/wiki/Server_Name_Indication" target="_blank">SNI</a>），所以同时要禁用SSL的证书验证。</p>
+<p>在google_appengine/google/appengine/tools/appengine_rpc.py文件中，HttpRpcServer类的_GetOpener方法</p>
+<pre><code class="python">opener.add_handler(fancy_urllib.FancyProxyHandler())</code></pre>
+<p>修改为</p>
+<pre><code class="python"><strong>proxy = "127.0.0.1:8087"</strong>
+opener.add_handler(fancy_urllib.FancyProxyHandler(<strong>{"http": proxy, "https": proxy}</strong>))</code></pre>
+<p>在google_appengine/google/appengine/tools/appengine_rpc_httplib2.py文件中，HttpRpcServerHttpLib2类的Send方法</p>
+<pre><code class="python">self.http = httplib2.Http(cache=self.memory_cache, ca_certs=self.certpath)</code></pre>
+<p>修改为<strong>（不使用GoAgent的话，disable_ssl_certificate_validation=True这个可以不写以保证安全性）</strong></p>
+<pre><code class="python">self.http = httplib2.Http(cache=self.memory_cache, ca_certs=self.certpath<strong>, proxy_info=httplib2.ProxyInfo(httplib2.socks.PROXY_TYPE_HTTP, "127.0.0.1", 8087), disable_ssl_certificate_validation=True</strong>)</code></pre>
+<p>在google_appengine/lib/fancy_urllib/fancy_urllib/__init__.py文件中，create_fancy_connection函数的PresetProxyHTTPSConnection类的connect方法</p>
+<pre><code class="python">if self.cert_reqs &amp; ssl.CERT_REQUIRED:</code></pre>
+<p>修改为（为GoAgent禁用证书校验，<strong>不使用GoAgent的可以不改这里保证安全性</strong>）</p>
+<pre><code class="python">if <strong>False</strong>:</code></pre>
+<p><strike>到这里并没有修改完。由于在google_appengine/lib/google-api-python-client/oauth2client/client.py文件的OAuth2Credentials类的from_json方法中调用了simplejson.loads(s)，然后把其中的data[&lsquo;token_uri&rsquo;]传递到了httplib2中。simplejson.loads产生的字符串是unicode而非string，而google_appengine/lib/httplib2/httplib2/socks.py文件的socksocket类的connect方法判断如果不是string，就抛出GeneralProxyError，于是会导致程序异常。</strike></p>
+<p><strike>考虑到这里其实应该是socks.py考虑不周，所以把socks.py文件的socksocket类的connect方法中的</strike></p>
+<pre><code class="python"><strike>(type(destpair[0]) != type(''))</strike></code></pre>
+<p><strike>修改为</strike></p>
+<pre><code class="python"><strike>(not isinstance(destpair[0], basestring))</strike></code></pre>
+<p>2012-11-8 23:28 更新：神奇的，以上bug，在SDK 1.7.3版本中已经修复……</p>
+<p>这样就可以通过代理来让appcfg.py访问GAE了。</p>
+<p>另外appcfg.py有个&ndash;oauth2的选项，可以不输入密码，而是通过oauth2的方式获取代码上传授权，对于开了二步验证的同学会很方便，但这个不是默认开启的，每次都输入也很麻烦。</p>
+<p>在google_appengine/google/appengine/tools/appcfg.py文件中，AppCfgApp类的_GetOptionParser方法</p>
+<p>parser.add_option(&rsquo;&ndash;oauth2&rsquo;, action='store_true&rsquo;, dest='oauth2&rsquo;,<br/>default=<strong>False</strong>,<br/>help='Use OAuth2 instead of password auth.&rsquo;)</p>
+<p>把False修改为True即可。</p>
+<p>但这样的话，PyCharm中通过用户名和密码的方式就不是很方便了，所以在后面还要加个判断，如果命令行选项里提供了邮箱，就不使用oauth2方式。</p>
+<p>同一个文件，AppCfgApp类的_GetRpcServer方法</p>
+<pre><code class="python">if self.options.oauth2 and not dev_appserver:</code></pre>
+<p>修改为</p>
+<pre><code class="python">if <strong>not self.options.email and</strong> self.options.oauth2 and not dev_appserver:</code></pre>
+<p>这样就不冲突了。</p>
+<p>这个改造并不是官方支持的，<strike>所以其中socks的代码bug也就不好上报issue到Google Code，</strike>但PyCharm的<a href="http://youtrack.jetbrains.com/issue/PY-7843" target="_blank">oauth2支持改进</a>是可以提的<strike>，而且鉴于我之前给PyCharm报的数个issue都得到了良好的处理，也希望这个能在设计得到改善</strike>2012-11-21 Update：122.878中已经修复。</p>

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Apache HTTP Client的DELETE不支持请求体
+date: '2014-06-13T13:40:08+08:00'
+tags:
+- java
+tumblr_url: http://blog.ayanamist.com/post/88644055751
+---
+<p>支持请求体的方法（PATCH/POST/PUT）均会实现<code>org.apache.http.HttpEntityEnclosingRequest</code>，而<code>org.apache.http.client.methods.HttpDelete</code>却没有，因此无法支持。</p>
+
+<p>如果有这种需求，服务端也在自己掌握，可以开启HiddenMethodFilter或类似的filter，将请求改成<code>POST http://endpoint?_method=DELETE</code>。</p>
+
+<p>如果服务端不在掌控，最简单的办法就是类覆盖了，复杂点就自己继承下<code>org.apache.http.client.methods.HttpEntityEnclosingRequestBase</code>然后传进去吧</p>

@@ -1,0 +1,32 @@
+---
+layout: post
+title: 在贝尔RG200E的tomato上使用mentohust
+date: '2012-12-28T15:35:23+08:00'
+tags:
+- tomato
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/39024594140
+---
+<p>首先我要鄙视一下自己的纠结，因为有另外一个刷了openwrt的路由器是可以上mentohust的。不过鉴于我对tomato的执著，所以花了一个多小时来折腾</p>
+<p>
+下载libpcap 1.0.0的代码，不要图新用了1.3.0的，会用下面这个来打脸的（这个消耗了我半个小时）。
+</p><pre><code>打开网卡vlan1失败: vlan1: vlan1: SIOETHTOOL(ETHTOOL_GTSO) ioctl failed: Invalid argument</code></pre>
+接着
+<pre><code>./configure --host=mipsel-linux-uclibc --with-pcap=linux --disable-largefile</code></pre>
+注意不要漏了<strong>disable-largefile</strong>，否则会用下面这个打脸（又是半个小时）。<pre><code>can't resolve symbol 'mmap64'</code></pre>
+如果configure的时候提示下面
+<pre><code>error: cannot determine linux version when cross-compiling</code></pre>
+用文本编辑器打开configure文件，找到下面这句
+<pre><code>ac_cv_linux_vers=unknown</code></pre>
+改为
+<pre><code>ac_cv_linux_vers=2</code></pre>
+再重新configure。
+然后make。<br/>
+再svn checkout出mentohust的代码
+<pre><code>./configure --host=mipsel-linux-uclibc --disable-encodepass --disable-arp --disable-notify --disable-nls --with-pcap=/path/to/libpcap.a --prefix=/opt --localstatedir=/var</code></pre>
+然后make。
+
+<p>
+到src文件夹里翻出mentohust文件，是个260多K的文件，SCP到路由器里（路由器当然要有jffs分区哈），然后配上相应的启动参数或配置文件，启动～
+</p>
+<p>对了，记得在开启了vlan支持的tomato版本里，不是用eth0来认证的，具体是哪个，设了IP后，SSH进去用ifconfig看一下哪个设备的IP是匹配的，一般是vlan1。</p>

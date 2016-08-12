@@ -1,0 +1,20 @@
+---
+layout: post
+title: 排查诡异的vps无法访问的问题
+date: '2016-07-17T13:33:08+08:00'
+tags:
+- linux
+tumblr_url: http://blog.ayanamist.com/post/147528380106
+---
+<p>帮人捣鼓vps，发现配好的端口，外面怎么也访问不通，curl就提示no route，但ping又能ping通。</p>
+
+<p>先看了下iptables，默认是ACCEPT的，再关了SELinux，也不行，仔细review了下iptables规则，发现可疑的两条</p>
+
+<pre>
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+</pre>
+
+<p>干掉后就正常了</p>
+
+<p>猜测是这个VPS提供商有做ping检测，如果ping不通就直接咔擦断网……</p>

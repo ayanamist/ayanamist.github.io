@@ -1,0 +1,38 @@
+---
+layout: post
+title: 为DicePlayer编译libffmpeg.so
+date: '2014-10-22T21:12:00+08:00'
+tags:
+- android
+- diceplayer
+- ffmpeg
+tumblr_url: http://blog.ayanamist.com/post/100664510711
+---
+<p>DicePlayer真乃一代神器，各种格式通吃，SAMBA、FTP一个不落，最重要的是，能支持2倍速播放！</p>
+
+<p>不过因为版权原因，DicePlayer先后阉割了DTS解码和AC3解码，后者的阉割导致人人影视一票的HR-HDTV都播放不了，而我又找不到清晰度、文件大小、字幕方便程度能媲美的替代品，只好操刀自己上。</p>
+
+<p>在xda的<a href="http://forum.xda-developers.com/showpost.php?p=53106989&amp;postcount=38" target="_blank">这个帖子</a>里提到，可以提取2.0.53版本中的libffmpeg_dice.so文件，放到sdcard下，但这只能恢复AC3解码。</p>
+
+<p>而那个帖子又提供了几个网友根据<a href="http://diceplayer.inisoft.co.kr/technical-note" target="_blank">DicePlayer官方页面</a>提供的源码，编译的版本，但放我这里总是有破音，而且也无法恢复DTS解码。</p>
+
+<p>于是我打算自己编译一下看看。</p>
+
+<p>看了下DicePlayer官方提供的源码，发现是基于ffmpeg 0.10.10修改的，于是把正宗的0.10.10源码弄下来，用工具对比了一下修改了哪些地方，发现没修改什么，似乎是从libav那边弄了点代码过来，不过没在libav页面上找到对应的代码。</p>
+
+<p>于是决定不进行大修改，直接编译：</p>
+
+<ol><li>下载ffmpeg的0.10.15版本代码，解压。</li>
+<li>先安装<a href="http://developer.android.com/tools/sdk/ndk/index.html" target="_blank">NDK</a>。</li>
+<li>再修改build-ffmpeg.sh脚本中的变量，记得按里面提示打开DTS部分，官方脚本有问题，可以用<a href="https://gist.github.com/ayanamist/6282b01fbdd9c105791f" target="_blank">我修改后的版本</a>。</li>
+<li>修改libavformat/nutdec.c第852行，<code>assert(0);</code>后添加一行<code>return 0;</code>，否则会编译报错。</li>
+<li>执行build脚本即可。</li>
+</ol><p>编译要求不高，在我DigitalOcean的512M内存VPS上都可以编译，耗时大概10分钟，最后在ffmpeg目录里可以得到libffmpeg_dice.so文件即可使用。</p>
+
+<p>附上解决问题过程中找到的几个有用的链接：</p>
+
+<ul><li>android ffmpeg <a href="https://github.com/guardianproject/android-ffmpeg" target="_blank">https://github.com/guardianproject/android-ffmpeg</a></li>
+<li>build and include freetype2 by default to enable the &lsquo;drawtext&rsquo; filter <a href="https://github.com/guardianproject/android-ffmpeg/commit/f08db49e613a7ea4423effb22973e3f1afefb819" target="_blank">https://github.com/guardianproject/android-ffmpeg/commit/f08db49e613a7ea4423effb22973e3f1afefb819</a></li>
+</ul><p>Update 1: 脚本又修改了一下，现在能支持ffmpeg-2.4.2版本</p>
+
+<p>Update 2: 现成的版本可以在<a href="http://forum.xda-developers.com/showpost.php?p=56199582&amp;postcount=41" target="_blank">这里</a>下载</p>

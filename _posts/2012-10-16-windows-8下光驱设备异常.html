@@ -1,0 +1,24 @@
+---
+layout: post
+title: Windows 8下光驱设备异常
+date: '2012-10-16T00:02:09+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/33644264773
+---
+<p>Windows 8下安装ImgBurn，会导致光驱设备异常不可用，并提示</p>
+
+<blockquote>
+  <p>Code 19: Windows cannot start this hardware device because its configuration information (in the registry) is incomplete or damaged</p>
+</blockquote>
+
+<p>Google了一下，找到<a href="http://technet.microsoft.com/en-us/library/cc772156(v=ws.10).aspx" target="_blank">这个</a>。里面提到</p>
+
+<blockquote>
+  <p>If the device is a CD or DVD drive, follow the procedure in Article ID 929461 on the Microsoft Web site (<a href="http://go.microsoft.com/fwlink/?LinkID=192798" target="_blank">http://go.microsoft.com/fwlink/?LinkID=192798</a>).</p>
+</blockquote>
+
+<p>看了看，就是要把<code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E965-E325-11CE-BFC1-08002BE10318}</code>这个注册表键值下的<code>UpperFilters</code>和<code>LowerFilters</code>删掉，然后重启。</p>
+
+<p>照做，果然恢复正常。</p>
+
+<p>然后发现Windows 8本身也可以直接刻录ISO文件，也就果断卸载了ImgBurn了。</p>

@@ -1,0 +1,17 @@
+---
+layout: post
+title: HTTP Message Length
+date: '2013-03-19T16:20:59+08:00'
+tags:
+- 技术
+- HTTP
+tumblr_url: http://blog.ayanamist.com/post/45744394616
+---
+<ol><li>任何不应该携带消息体的Message，包括1xx、204、304号响应，以及所有的HEAD请求的响应，应该在传输完Header后额外一个CRLF结束。</li>
+<li>Header里指定了Transfer-Encoding且不为identity，则由chunked传输编码指定。chunked编码简单规则<a href="http://stackoverflow.com/questions/4929484/http-chunked-data-size-and-content-length" target="_blank">见此</a>。</li>
+<li>Header里指定了Content-Length时，为该Field十进制字面量。该Field不应与Transfer-Encoding共存，如果共存，则该Field无效。</li>
+<li>媒体类型为multipart/byteranges时，由该类型<a href="http://www.freesoft.org/CIE/RFC/2068/225.htm" target="_blank">自解释</a>。尽量避免使用该种方式，除非你确定接收方能正确处理。在请求中使用Range的客户端被视作具有处理能力。</li>
+<li>连接被关闭。</li>
+</ol><p>按从上到下顺序解析。<br/>如果一个请求包含了消息体但没指定Content-Length，则服务器应该返回400或411。</p>
+<p>在单一请求并处于persistent connection状态下，只有第3条有可能完成当前请求后接受下一个请求。</p>
+<p>更多细节请参阅Source的RFC2616。</p>

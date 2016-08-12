@@ -1,0 +1,10 @@
+---
+layout: post
+title: Firefox 41 e10s 体验
+date: '2015-08-14T23:40:22+08:00'
+tags:
+- firefox
+- e10s
+tumblr_url: http://blog.ayanamist.com/post/126674455531
+---
+<p>这里使用的是Firefox Developer Edition，版本号是41.0a2，32位版本。</p><p>一切都以发文时的<a href="http://arewee10syet.com/" target="_blank">http://arewee10syet.com/</a>网站描述状态为准。</p><p>通过打开Twitter页面，然后反复在Home和Notification两个tab间切换检测流畅性。</p><p>一开始装了Addon商店里的LastPass和uBlock Origin，发现卡顿严重，反馈给@upsuperx 后，提示可能uBlock扩展有问题，禁用后无缓解，再把LastPass （3.2.16）禁用后恢复正常。</p><p>查看报告的bug，装了<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1008768#c91" target="_blank">评论</a>里提到的LastPass最新开发版（需要先<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1008768#c138" target="_blank">关闭签名验证</a>），未再出现卡顿，<strike>但扩展菜单变成中文的了，强制设置英文后，其它UI都是英文，但菜单还是中文</strike>把语言中英语调到中文前面就好了，但依旧是个bug。</p><p>阅读同一个bug汇报后发现有提到<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1008768#c141" target="_blank">uBlock的问题</a>，换用AdBlock Plus，查看之前汇报的<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=930787" target="_blank">issue</a>，最新评论都是可用。再阅读其它评论，注意到需要<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=930787#c13" target="_blank">打开full e10s模式</a>。但我这里已经被打开了，不过不是默认值，不知道是哪个扩展替我修改的。<br/></p>

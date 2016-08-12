@@ -1,0 +1,21 @@
+---
+layout: post
+title: 干掉Google Chrome Instant Extender新NTP
+date: '2014-02-21T00:11:00+08:00'
+tags:
+- Chrome
+tumblr_url: http://blog.ayanamist.com/post/77283884260
+---
+<p>NTP就是NewTab Page的意思，也就是chrome://newtab对应的页面。
+忘了从哪个版本开始，Chrome的NTP就变成了Google搜索框，现在居然还加上了Google Plus的提示等等，简直就是把Google首页搬过来了，和我直接设成Google首页有啥区别。
+我的需求是只显示书签栏，其它全部去掉。之前用Old New Tab这个扩展，不过到了Chrome 33这个扩展也失效了。
+于是想到16进制直接修改文件的办法，试了下，可行。</p>
+
+<p>Windows下，在chrome.dll中寻找chrome/newtab并将该字符串包括花括号内容，替换为about:blank，用\x00补足，即可阻止Google从远程加载NTP；在resources.pak中搜索document.addEventListener(&lsquo;DOMContentLoaded&rsquo;, init);将其中事件随便替换为无意义的，即可阻止本地NTP的渲染。
+Linux下原理一样，只不过不是chrome.dll而就是chrome本身，vim的话记得开set binary并只用R/r操作，如果要用vim进行16进制编辑可以参考<a href="http://vim.wikia.com/wiki/Improved_hex_editing" target="_blank">该文</a>。</p>
+
+<p>修改完成后，记得清楚所有缓存后立刻关闭整个Chrome防止加载本地缓存。</p>
+
+<p>至此，一切都清净了，只是每次Chrome升级都要记得修改一番。</p>
+
+<p>update: 可以直接用<a href="https://chrome.google.com/webstore/detail/jliilhbdldnjbdbpajaakhpjpahnopbn" target="_blank">New Tab Reloaded</a>这个扩展。</p>

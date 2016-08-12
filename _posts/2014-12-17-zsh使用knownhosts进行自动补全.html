@@ -1,0 +1,17 @@
+---
+layout: post
+title: zsh使用known_hosts进行自动补全
+date: '2014-12-17T12:21:36+08:00'
+tags:
+- ssh
+tumblr_url: http://blog.ayanamist.com/post/105412315641
+---
+<p>默认zsh是支持这个的，如果发现登录过的机器无法补全，检查一下<code>$HOME/.ssh/known_hosts</code>文件是否存在，里面是否记录了机器名。</p>
+
+<p>如果不存在这个文件，配置文件里添加<code>StrictHostKeyChecking no</code></p>
+
+<p>如果里面记录的不是机器名，配置文件里添加<code>HashKnownHosts no</code></p>
+
+<p>配置推荐放在$HOME/.ssh/config里，而不要修改<code>/etc/ssh/ssh_config</code></p>
+
+<p>参数具体含义可以<code>man ssh_config</code></p>

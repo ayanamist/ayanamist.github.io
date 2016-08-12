@@ -1,0 +1,39 @@
+---
+layout: post
+title: cygwin编译nghttpx
+date: '2015-12-23T13:26:30+08:00'
+tags:
+- nghttpx
+- cygwin
+- spdylay
+tumblr_url: http://blog.ayanamist.com/post/135758773486
+---
+<p>起因是想用h2代理了，但golang上h2支持还很差，两个spdy库折腾了一晚上都没办法很好的支持CONNECT语义，只好退而求其次用nghttp方案</p>
+
+<p>先按<a href="http://stackoverflow.com/a/27389613/522024" target="_blank">这里</a>把FD_SETSIZE调大，否则会经常出现莫名其妙的连接不上的问题。</p>
+
+<p>编译主要看<a href="https://nghttp2.org/documentation/package_README.html#building-from-git" target="_blank">这里</a>，注意文档中提示的<a href="https://nghttp2.org/documentation/package_README.html#notes-for-building-on-windows-mingw-cygwin" target="_blank">几个点</a>。</p>
+
+<p>其中如果要编译spdylay的话，不能装cygwin带的libevent，虽然类似的问题是<a href="https://groups.google.com/forum/#!topic/mailing.freebsd.ports/x8dr9mf9itM" target="_blank">发生在BSD系统上</a>。</p>
+
+<p><del>而编译nghttp时则有<a href="https://github.com/tatsuhiro-t/nghttp2/issues/108#issuecomment-166802587" target="_blank">两个小坑</a></del>其中一个问题已修正，同时提交的<a href="https://github.com/tatsuhiro-t/nghttp2/pull/461" target="_blank">一个PR</a>也合并了；另一个则是需要注意设置</p>
+
+<p><code>export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig</code></p>
+
+<p>防止找不到spdylay。</p>
+
+<p>编译后配置文件可以为</p>
+
+<pre>
+frontend=127.0.0.1,8080
+backend=xxxx.com,443
+client-proxy=yes
+add-x-forwarded-for=no
+no-via=yes
+no-ocsp=yes
+npn-list=h2
+insecure=yes
+workers=4
+</pre>
+
+<p>注意文件要保存成Unix换行符，否则在shrpx里会提示Port is invalid</p>

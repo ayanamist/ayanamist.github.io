@@ -1,0 +1,10 @@
+---
+layout: post
+title: Linux下制造负载的方法
+date: '2015-10-08T21:24:05+08:00'
+tags:
+- bash
+- stress
+tumblr_url: http://blog.ayanamist.com/post/130746827696
+---
+<p>公司测试环境开始对load有要求了，load低于一定值有一段时间就会降低虚拟机配置，可是臣妾真的做不到时时刻刻都有高负载啊，只好搞点花样：</p><p>#!/bin/bash<br/>for i in seq $(($(fgrep processor /proc/cpuinfo | wc -l)-1)); do while : ; do : ; done &amp; done<br/></p>

@@ -1,0 +1,11 @@
+---
+layout: post
+title: Spring的property注入小坑一例
+date: '2014-06-12T22:03:50+08:00'
+tags:
+- java
+- spring
+tumblr_url: http://blog.ayanamist.com/post/88571003101
+---
+<p>Spring的property注入在找setter的时候用了<code>java.beans.Introspector#processPropertyDescriptors</code>，这个是先找getter，再找同样类型的setter的，而Spring又会自动转换类型。
+于是当你有个List<string>的变量，写了对应的getter，然后多写了个String的setter（用split切成List），然后用value的方式注入，实际会把String转换成一个List<string>再用对应setter，并不会走split。</string></string></p>

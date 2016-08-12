@@ -1,0 +1,33 @@
+---
+layout: post
+title: Java TreeSet文档不一致
+date: '2015-02-04T21:50:00+08:00'
+tags:
+- java
+- docs
+- treeset
+tumblr_url: http://blog.ayanamist.com/post/110067372686
+---
+<p>这是接手前人项目时，遇到的线上问题，才发现的。</p>
+
+<p>TreeSet在目前最新的<a href="http://docs.oracle.com/javase/8/docs/api/java/util/TreeSet.html" target="_blank">Java SE 8文档</a>中描述了自己的行为结果不像其它Set：<strong>TreeSet依赖compareTo的结果，而其它Set依赖equals</strong></p>
+
+<blockquote>
+  <p>This is so because the Set interface is defined in terms of the equals operation, but a TreeSet instance performs all element comparisons using its compareTo (or compare) method, so two elements that are deemed equal by this method are, from the standpoint of the set, equal. The behavior of a set is well-defined even if its ordering is inconsistent with equals; it just fails to obey the general contract of the Set interface.</p>
+</blockquote>
+
+<p>但它家的add和remove两个方法的文档却是直接从Set接口抄过来的：只依赖equals方法的结果：</p>
+
+<ul><li><p><a href="http://docs.oracle.com/javase/8/docs/api/java/util/TreeSet.html#add-E-" target="_blank">add</a></p>
+
+<blockquote>
+  <p>Adds the specified element to this set if it is not already present. More formally, adds the specified element e to this set if the set contains no element e2 such that (e==null ? e2==null : e.equals(e2)). If this set already contains the element, the call leaves the set unchanged and returns false.</p>
+</blockquote></li>
+<li><p><a href="http://docs.oracle.com/javase/8/docs/api/java/util/TreeSet.html#remove-java.lang.Object-" target="_blank">remove</a></p>
+
+<blockquote>
+  <p>Removes the specified element from this set if it is present. More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this set contains such an element. Returns true if this set contained the element (or equivalently, if this set changed as a result of the call). (This set will not contain the element once the call returns.)</p>
+</blockquote></li>
+</ul><p>经过查看代码，TreeSet的底层实现TreeMap在这两个方法上确实都是只根据compareTo方法而完全不看equals方法，来判断是否同一个对象的。</p>
+
+<p>于是就有人踩坑了！</p>

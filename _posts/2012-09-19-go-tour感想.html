@@ -1,0 +1,16 @@
+---
+layout: post
+title: Go Tour感想
+date: '2012-09-19T14:48:53+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/31849948305
+---
+<p>决定学一下Go语言，因为之前在YC HackerNews上看到有人在赞美Go的异常设计。</p>
+<p>按照 <a href="http://golang.org/doc/install" target="_blank">这里</a>，装完Go环境后，做<a href="https://code.google.com/p/go-tour/" target="_blank">A Tour of Go</a></p>
+<p>前几十页的幻灯，让我感觉，这是个带了语法糖的C……而且发现闭包是不能递归的……</p>
+<p>一直到Methods这张，才发现这货不支持传统的OO，不过变通的方法非常的……让我想起之前看Scala时的implicit特性。不过不能给基本类型添加方法，让这个变通的实现显得索然无味，本来看第一张slide的时候还眼前一亮，觉得这种设计可以玩的地方太多了，看到第二张的限制，顿时就从超新星变白矮星了……</p>
+<p>之后的interface的设计也比较独特（或者说奇葩），我总觉得这样会让代码支离破碎起来……感觉这个东西更适合duck type，而不适合Go这样带类型检查的语言。</p>
+<p>所谓的goroutine也不是那么让人眼前一亮。只不过把别的语言里的类特性变成了语言关键字而已。</p>
+<p>感觉Go更像是一个C语言的改进版，除了原生支持的range、map和goroutine比较方便，有GC不用时刻注意控制内存，其它大部分东西，改写成C也多写不了多少代码。</p>
+<p>鉴于其奇葩的语法形式和烂大街的名字，也能理解为啥发展了这么久，始终处于不温不火的状态。</p>

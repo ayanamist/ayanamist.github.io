@@ -1,0 +1,20 @@
+---
+layout: post
+title: 使用oauthlib对UTF8内容进行签名时请谨慎
+date: '2013-03-24T21:25:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/46156906728
+---
+<a href="https://github.com/idan/oauthlib/pull/127">使用oauthlib对UTF8内容进行签名时请谨慎</a><br/><p>这不是oauthlib第一次表现对Unicode内容的<a href="https://github.com/idan/oauthlib/pull/53" target="_blank">轻薄</a>了。</p>
+<p>如果不想用这种侵入性的修改方案，可以使用我的另外一种方法：</p>
+<pre><code>def urldecode(params):
+    if isinstance(params, unicode):
+        params = params.encode("utf8")
+    return oauthlib.common.decode_params_utf8(urlparse.parse_qsl(params, keep_blank_values=True))
+
+oauthlib.common.urldecode = urldecode
+</code></pre>
+<p>当然这个方法的牺牲是，对非法十六进制字符的检测没有了，当然你可以照着oauthlib的方法再加进去</p>
+<p>其实这个问题的本质是urlparse.parse_qsl函数的问题，没有针对unicode_string做检测，而是按照iterable object的方式产生u&rsquo;\xe5\x95\xa6\xe5\x95\xa6'这样的畸形unicode字符串……</p>
+<p><strong>Update:</strong> 这个问题现在已经被解决了。</p>

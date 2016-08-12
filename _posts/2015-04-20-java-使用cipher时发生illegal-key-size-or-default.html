@@ -1,0 +1,17 @@
+---
+layout: post
+title: Java 使用Cipher时发生Illegal key size or default parameters
+date: '2015-04-20T17:11:55+08:00'
+tags:
+- java
+- cipher
+- security
+tumblr_url: http://blog.ayanamist.com/post/116899168171
+---
+<p>用公司里的一个组件，居然在本机跑不起来，看了下堆栈，是在解密一个东西的时候失败了，把最小复现代码弄出来，去掉了一个workaround，看到真正的问题是抛出了<code>java.security.InvalidKeyException: Illegal key size or default parameters</code></p>
+
+<p>Google搜了一下，发现貌似是美国加解密技术出口限制惹的祸，需要安装Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files，这个<a href="http://stackoverflow.com/questions/6481627/java-security-illegal-key-size-or-default-parameters" target="_blank">问题</a>里有所有的下载地址。</p>
+
+<p>不想安装的话，这个<a href="http://stackoverflow.com/questions/1179672/how-to-avoid-installing-unlimited-strength-jce-policy-files-when-deploying-an" target="_blank">问题</a>下面有通过反射关掉限制的代码，不过只能用在JDK7和JDK8上，而且实际上是违反了Oracle的授权协议，有法律风险。</p>
+
+<p>有人说用Bouncy Castle可以避免，这点在Bouncy Castle的<a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions" target="_blank">FAQ</a>里说的很明确：依然需要安装文件破除限制。</p>

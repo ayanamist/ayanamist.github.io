@@ -1,0 +1,12 @@
+---
+layout: post
+title: YGC时间逐渐增长
+date: '2016-03-14T12:52:55+08:00'
+tags:
+- jvm
+- java
+- garbage collection
+- classloader
+tumblr_url: http://blog.ayanamist.com/post/141014533856
+---
+<p>问题起因是<a href="http://hellojava.info/?p=438" target="_blank">这篇文章</a>结尾的问题。</p><p>排查了小半个上午，结论是因为xstream默认构造器时会new一个CompositeClassLoader导致内存泄漏，GC root不断增加，但触发一次FullGC后，PermGen得到清理，所以时间又会降下来。</p><p>解决办法是传固定的ClassLoader而不是每次都new一个。</p><p>内网的ATATech的51137文章也详细描述了原因。</p><p>题外话，这个问题最初在StackOverflow上<a href="http://stackoverflow.com/questions/35956656" target="_blank">提问</a>，得到了一片老外们关于GC的质疑（甚至没有一个人尝试去跑过代码），倒也不枉我对SO小白社区的印象。</p>

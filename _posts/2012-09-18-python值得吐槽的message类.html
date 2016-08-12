@@ -1,0 +1,29 @@
+---
+layout: post
+title: Python值得吐槽的Message类
+date: '2012-09-18T02:23:00+08:00'
+tags:
+- 吐槽
+- Python
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/31739834334
+---
+<p>自从我用asyncore重写搜狗的代理后，费了几天功夫调整好后，又出现新问题。</p>
+<p>网页浏览没有问题，但迅雷始终无法通过高速通道和离线下载来下载文件。一开始以为是迅雷的服务器有问题，后来发现关掉代理服务器后，迅雷的状态就从正在查询离线服务器变到了等待获取，估计又是我的代码问题。</p>
+<p>用Microsoft Network Monitor抓包看了看，发现HTTP头全部是用\n来隔开的，规范应该是用\r\n来隔开的。估计迅雷服务器容错不好，而一般的Web服务器Apache、IIS、nginx之类能容错，所以没发现这个问题。</p>
+<p>只好翻代码看是什么问题，然后发现mimetools.Message及它的父类rfc822.Message在序列化头部的时候，是用\n拼接的，而且居然是写死了的。</p>
+<p>文档标记这两个已经deprecated，但换用email.message.Message后更加奇葩，是用print到cStringIO.StringIO来拼接的，而基于<a href="http://stackoverflow.com/questions/1677424/overriding-the-newline-generation-behaviour-of-pythons-print-statement" target="_blank">这里的描述</a>，在2.X上所有的print输出的方式都是\n换行，也无法hook掉，因为调用的是email.parser.Parser解析的……</p>
+<p>最后还是替换掉了mimetools.Message的__setitem__方法。这个方法还有一个奇葩之处，在于它先把内容按\n打散，再又按\n拼装回去，不知道为什么会有这么奇怪的方式……</p>
+<p>另外这个类还有一个很诡异的地方，它为了保证多个同名header能被正常序列化，是提前存储好序列化的内容的，就导致最后parse的结果会少一个换行……还是用上面那个方法修补了一下</p>
+<p>大体修补后的代码如下：</p>
+<pre>
+<code class="python">class PatchedMessage(mimetools.Message):
+    def __setitem__(self, name, value):
+        del self[name] # Won't fail if it doesn't exist
+        self.dict[name.lower()] = value
+        text = name + ": " + value
+        if self.headers and self.headers[-1][-1] != "\n":
+            self.headers[-1] += "\r\n"
+        self.headers.append(text + "\r\n")
+</code></pre>
+<p>不得不说Python 2.X中的坑相当多，直接把我坑爹到凌晨了……</p>

@@ -1,0 +1,38 @@
+---
+layout: post
+title: racoon 搭建ipsec vpn小记
+date: '2014-10-05T16:28:32+08:00'
+tags:
+- ipsec
+- vpn
+- racoon
+- vpnc
+tumblr_url: http://blog.ayanamist.com/post/99209420911
+---
+<p>按网上很多教程搭了racoon，启动后，用vpnc连接，始终失败，日志里全是</p>
+
+<blockquote>
+  <p>NOTIFY: couldn&rsquo;t find the proper pskey, try to get one by the peer&rsquo;s address.</p>
+  
+  <p>ERROR: couldn&rsquo;t find the pskey for xxx.xxx.xxx.xxx.</p>
+  
+  <p>ERROR: failed to process ph1 packet (side: 1, status: 2).</p>
+  
+  <p>ERROR: phase1 negotiation failed.</p>
+</blockquote>
+
+<p>最后瞎摸索，发现必须在<code>psk.txt</code>的第一行加上</p>
+
+<p><code># Group Name Group Secret</code></p>
+
+<p>然后再添加vpnc配置中的IPSec ID/IPSec secret就可以了。</p>
+
+<p>原因未知，但折腾了比较久，从CentOS折腾到Ubuntu，在此记一笔，有谁遇到了可以试试。</p>
+
+<p>PS：</p>
+
+<blockquote>
+  <p>ERROR: invalied encryption algorithm=0.</p>
+</blockquote>
+
+<p>这个报错是正常的，不影响什么，原因依旧未知。</p>

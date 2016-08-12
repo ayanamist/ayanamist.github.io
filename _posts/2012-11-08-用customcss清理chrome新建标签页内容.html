@@ -1,0 +1,23 @@
+---
+layout: post
+title: 用Custom.css清理Chrome新建标签页内容
+date: '2012-11-08T22:30:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/35270866328
+---
+<p>看着Chrome的新建标签页里那么多我不想要的东西，心里不爽很久了，今天想到Chrome里也有用户自定义CSS的东西，于是决定清理下。</p>
+<p>文件在%userprofile%\AppData\Local\Google\Chrome\User Data\<em>Default</em>\User StyleSheets\Custom.css （如果Chrome中有多个用户，注意把斜体部分修改到对应的用户上）</p>
+<p>修改后存盘会立刻生效，不过更靠谱的方式应该是用开发者工具调试好后再写响应的规则。</p>
+<p>搜到来源网站的内容，照葫芦画瓢了一下</p>
+<pre><code class="css">html[bookmarkbarattached]&gt;body&gt;div#card-slider-frame{display: none !important;}
+html[bookmarkbarattached]&gt;body&gt;button#login-container{display: none !important;}
+html[bookmarkbarattached]&gt;body&gt;div#footer&gt;div#footer-content&gt;ul#dot-list&gt;li.dot{display: none !important;}
+html[bookmarkbarattached]&gt;body&gt;div#footer&gt;div#footer-content&gt;a#chrome-web-store-link{display: none !important;}
+</code></pre>
+<p>第一行隐藏那没有用的中间区域，包括App的显示、最近访问页面等等；第二行隐藏那个提示登录的东西（登录后则显示的是邮箱）；第三行隐藏底部切换的按钮；第四行隐藏右下角的商店链接。</p>
+<p>CSS尽量写的冗余一些，特定化一些，不要嫌麻烦，因为这个CSS是会在所有网页上都生效的。</p>
+<p>如果设置了一直显示书签栏，则要改为</p>
+<pre><code class="css">html:not([bookmarkbarattached])</code></pre>
+<p>自此Chrome新建标签页清理完毕，看起来舒服不少。<strike>对启动速度也略有提升，因为不会再渲染那些破东西了。</strike></p>
+<p><img src="http://67.media.tumblr.com/tumblr_md6awe3X4B1qe60vn.png"/></p>

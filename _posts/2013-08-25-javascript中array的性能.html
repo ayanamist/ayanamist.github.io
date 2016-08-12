@@ -1,0 +1,17 @@
+---
+layout: post
+title: JavaScript中Array的性能
+date: '2013-08-25T13:27:35+08:00'
+tags:
+- javascript
+tumblr_url: http://blog.ayanamist.com/post/59268029230
+---
+<p>来源里是浏览器中Array和Object的性能差别，我只取了其中Array的部分。两者用途都分不清的，也暂时没必要研究其中的性能差别吧。</p>
+<ul><li>Array push / pop / shift 方法非常快</li>
+<li>Array.shift() 比pop() 慢6倍</li>
+<li>Array.push(data) 比 Array[nextIndex] = data 快近20倍</li>
+<li>Array.unshift(data) 比较慢</li>
+<li>把数组元素设null array[index] = null 比直接删除delete array[index] 要快4倍</li>
+<li>向数组中间纯插入不删除元素Array.splice(index,0,data) 非常非常慢</li>
+<li>数组中间用splice替换单个元素Array.splice(index,1,data) 会被优化为array[index] = data，因此仍然很快</li>
+</ul><p>我从中得出个小小的结论：如果要对数组中间的元素进行插入操作，预分配Array还是很有意义的</p>

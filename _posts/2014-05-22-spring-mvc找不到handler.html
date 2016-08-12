@@ -1,0 +1,14 @@
+---
+layout: post
+title: Spring MVC找不到Handler
+date: '2014-05-22T18:49:00+08:00'
+tags:
+- java
+- spring mvc
+tumblr_url: http://blog.ayanamist.com/post/86492761451
+---
+<p>记一笔：</p>
+
+<p>当Spring MVC没有按照预期找到对应的Controller，提示“Did not find handler method for”的时候，在<code>org.springframework.web.servlet.DispatcherServlet#doDispatch</code>这里下断点，找下去</p>
+
+<p>一般可以直接从<code>org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#lookupHandlerMethod</code>这里找下去</p>

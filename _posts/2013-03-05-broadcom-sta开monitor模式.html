@@ -1,0 +1,13 @@
+---
+layout: post
+title: Broadcom STA开monitor模式
+date: '2013-03-05T13:29:46+08:00'
+tags:
+- 技术
+- Linux
+tumblr_url: http://blog.ayanamist.com/post/44601912638
+---
+<p>玩aircrack-ng，要打开网卡的monitor模式，从他家wiki到网上教程，全都是用airmon-ng来打开，于是在这个bcm4313芯片上全部失败，因为只有brcmsmac才支持设备是wlan0，但信号超弱，用sta驱动时设备是eth1，虽然信号好但直接提示设备不支持……</p><p>后来闲来无事翻broadcom的<a href="http://www.broadcom.com/docs/linux_sta/README.txt" target="_blank">readme</a>，发现原来他家STA驱动非常良心的带了monitor模式，只不过开启方式比较非主流。</p>
+<blockquote>HOW TO USE MONITOR MODE<br/> &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;<br/> To enable monitor mode:<br/> $ echo 1 &gt; /proc/brcm_monitor0<br/>  <br/> Enabling monitor mode will create a &lsquo;prism0&rsquo; network interface. Wireshark and other netwokk tools can use this new prism0 interface.<br/>  <br/> To disable monitor mode:<br/> $ echo 0 &gt; /proc/brcm_monitor0</blockquote>
+<p>连airmon-ng都不需要，直接prism0替换mon0继续往下走就可以了</p>
+<p>看文档是多么的重要呀。</p>

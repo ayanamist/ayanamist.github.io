@@ -1,0 +1,26 @@
+---
+layout: post
+title: Android尝试加密设备时正常重启
+date: '2013-10-03T00:35:35+08:00'
+tags:
+- android
+tumblr_url: http://blog.ayanamist.com/post/62909559509
+---
+<p>尝试用Encrypt Phone对全手机加密时，手机未进入加密流程，而是正常重启。</p>
+
+<p>连上adb后logcat，可以看到重启前最后的log提示</p>
+
+<blockquote>
+  <p>E/Cryptfs (  300): unmounting /data failed</p>
+  
+  <p>E/Cryptfs (  300): Error enabling encryption after framework is shutdown, no data changed, restarting system</p>
+</blockquote>
+
+<p>Google一下可以发现<a href="https://code.google.com/p/android/issues/detail?id=58073" target="_blank">#58073</a>这个issue，其中<a href="https://code.google.com/p/android/issues/detail?id=58073#c29" target="_blank">29楼</a>提供了非常有用的方法：</p>
+
+<pre><code>while true; do lsof | grep /data; sleep 0.2; done
+</code></pre>
+
+<p>在执行加密时，在adb shell中同时执行上面的命令，看重启前是哪个进程依旧挂住/data。</p>
+
+<p>在我这里是CallRecorder的alsa_daemon进程，把CallRecorder临时卸载，并killall alsa_daemon，就可以正常进入加密流程读进度条了</p>

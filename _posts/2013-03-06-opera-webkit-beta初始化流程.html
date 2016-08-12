@@ -1,0 +1,24 @@
+---
+layout: post
+title: Opera Webkit Beta初始化流程
+date: '2013-03-06T13:11:00+08:00'
+tags:
+- Opera
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/44687952658
+---
+<p>因为Opera Beta里还有Google Analytics，这个也是会有请求和初始化的过程的，这里略过不提。</p>
+<ol><li>HTTP请求 <a href="http://xml.opera.com/json/update/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315&amp;timesincelastcheck=0" target="_blank">http://xml.opera.com/json/update/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315&amp;timesincelastcheck=0</a></li>
+<li>HTTP请求 <a href="http://xml.opera.com/json/spoof/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315" target="_blank">http://xml.opera.com/json/spoof/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315</a></li>
+<li>HTTP请求 <a href="http://xml.opera.com/json/userjs/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315" target="_blank">http://xml.opera.com/json/userjs/android/?pnum=4277330&amp;version=14.0.1025.52315&amp;buildno=52315</a><br/>被302重定向到 <a href="http://get.geo.opera.com/res/servicefiles/browserjsfiles/json/mobile/browserjs-generic-test-20130131.js" target="_blank">http://get.geo.opera.com/res/servicefiles/browserjsfiles/json/mobile/browserjs-generic-test-20130131.js</a><br/><strong>这个get.geo.opera.com域名在国内返回82.145.214.12，国外返回141.0.13.4</strong></li>
+<li><strong>HTTPS请求 api.recsys.opera.com:443</strong></li>
+<li><strong>DNS解析 server4.operamini.com，SOCKs连接1080端口</strong></li>
+<li>HTTP请求 <a href="http://api.recsys.opera.com/assets/templates/2_article-box_en.json" target="_blank">http://api.recsys.opera.com/assets/templates/2_article-box_en.json</a></li>
+<li>HTTP请求 <a href="http://api.recsys.opera.com/assets/templates/2_article-preview_en.json" target="_blank">http://api.recsys.opera.com/assets/templates/2_article-preview_en.json</a></li>
+<li>DNS解析 recsys.op-cdn.net，返回CNAME d3lmvlc0jtu3q4.cloudfront.net及相关A记录，未继续跟踪</li>
+<li>DNS解析 server4-1.operamini.com HTTP请求80端口，SOCKs连接1080端口</li>
+</ol><p>粗体字部分是我认为的判断使用国内服和国外服的地方。以后有条件的话，可能考虑对第四条做MITM看看请求的内容是什么。</p>
+<p>1号2号3号的HTTP请求的User Agent为空，后面的User Agent是Opera Android</p>
+<p>本流程利用手机连接VPN后，在VPN所在服务器用以下命令抓取：</p>
+<pre><code>tshark -f "net 37.228.104.0/21 or net 82.145.208.0/20 or net 91.203.96.0/22 or net 141.0.8.0/21 or net 195.189.142.0/23 or port 53" -i eth0 -q -w ~/opera.cap</code></pre>
+<p>其中网段为Opera公司<a href="http://bgp.he.net/AS39832#_prefixes" target="_blank">所拥有的网段</a>。</p>

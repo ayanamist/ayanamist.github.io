@@ -1,0 +1,32 @@
+---
+layout: post
+title: Android全设备加密
+date: '2013-07-06T23:16:16+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/54755450346
+---
+<p><a href="https://community.freescale.com/docs/DOC-93753" target="_blank">这里</a>有大概的步骤和常见问题处理。</p>
+<p>值得一提的是Orig filesystem overlaps crypto footer region.  Cannot encrypt in place这个问题。CM的<a href="https://jira.cyanogenmod.org/browse/CYAN-87" target="_blank">JIRA</a>上有人贴出了详细步骤：</p>
+<blockquote>
+<p>Reboot into recovery (I&rsquo;m using 4EXT Recovery, though CWM Recovery should work too)</p>
+<p>Make sure /system, /sdcard, and /data are all mounted</p>
+<p>From an adb shell, make a tar backup of /data (make sure you first have enough space on your SD card):</p>
+<p>/system/xbin/tar -C / -cf /sdcard/data.tar data</p>
+<p>Figure out device name of /data partition:</p>
+<p>grep /data /proc/mounts</p>
+<p>As an example, let&rsquo;s say the previous step gave you /dev/block/mmcblk0p23</p>
+<p>Figure out the partition&rsquo;s size and the new size of the /data filesystem:</p>
+<p>data_dev_size=$(cat /sys/class/block/mmcblk0p23/size)</p>
+<p>new_fs_size=$(( ((data_dev_size/2)-16)*1024 ))</p>
+<p>Reformat /data with correct size (continuing with the example of mmcblk0p23):</p>
+<p>umount /data</p>
+<p>/system/bin/make_ext4fs -a /data -l $new_fs_size /dev/block/mmcblk0p23</p>
+<p>Remount /data</p>
+<p>Restore the backup of /data:</p>
+<p>/system/xbin/tar -C / -xf /sdcard/data.tar</p>
+<p>Reboot</p>
+<p>The &ldquo;Encrypt phone&rdquo; option in the Settings app now properly encrypts /data on the phone.</p>
+</blockquote>
+<p>注意备份还原一定不要用Recovery内置的，一定要按原文走tar手动，因为Recovery的还原会自动format，才做好的特殊大小的分区就没了……</p>
+<p>当然我的C8950D在折腾了这么多后依然是报这个错误，哪怕我已经留了16MB的大小了。考虑到这手机在其它诸多方面的奇葩之处以及这个功能其实在设置里是被隐藏起来的，很可能底层还被改变了什么。总之更加坚定了我换手机的想法。</p>
+<p>开全设备加密的最大意义，就是手机一旦丢了，没有密码，无法从/data里读取出个人数据，从而防止身份盗用的问题。毕竟现在太多的账号可以通过手机短信找回密码了。</p>

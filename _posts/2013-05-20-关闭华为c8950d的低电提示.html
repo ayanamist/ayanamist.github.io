@@ -1,0 +1,13 @@
+---
+layout: post
+title: 关闭华为C8950D的低电提示
+date: '2013-05-20T22:28:02+08:00'
+tags:
+- Android
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/50908084084
+---
+<p>这手机有个不爽的设定，就是在电量29%的时候会弹出个提示，问是否要开启省电模式。更不爽的是，这个提示会打断当前的进程，导致录像中断。</p>
+<p>把几个可疑的/system/app下的apk弄出来研究了下，发现相关代码是在SystemUI里，懒得改动代码，试了一个偷懒的方法，发现比较靠谱有用：</p>
+<p>用<a href="https://play.google.com/store/apps/details?id=com.jrummy.liberty.toolboxpro" target="_blank">ROM Toolbox Pro</a>的App Manager找到System UI，使用Advanced Freeze，把Receivers里的Power Saving Mode和Services里的PowerSavingService都disable掉，然后Force Stop一下就好了。</p>
+<p>也许不用ROM Toolbox Pro也可以，大家自行寻找具有类似功能的软件吧。</p>

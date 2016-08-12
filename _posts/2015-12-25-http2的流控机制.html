@@ -1,0 +1,33 @@
+---
+layout: post
+title: HTTP/2的流控机制
+date: '2015-12-25T13:24:02+08:00'
+tags:
+- nghttpx
+- http/2
+- flow control
+tumblr_url: http://blog.ayanamist.com/post/135891204001
+---
+<p>起因是在测试H2的代理，发现裸SSL的速度（4MB/s）和用了H2的速度（500KB/s）相差好远。感觉像是配置问题，于是翻<a href="https://nghttp2.org/documentation/nghttpx.1.html" target="_blank">nghttpx的文档</a>，尝试了好几个参数，最后发现</p>
+
+<pre>
+backend-http2-window-bits=20
+backend-http2-connection-window-bits=30
+</pre>
+
+<p>能让速度恢复到理想水平。知其然当然要知其所以然，搜了下，大概是HTTP/2的流控机制导致的。</p>
+
+<p>HTTP/2流控机制的详细描述在<a href="https://httpwg.github.io/specs/rfc7540.html#WINDOW_UPDATE" target="_blank">WINDOW_UPDATE帧</a>的定义里。国内也有两篇文章介绍了：<a href="http://www.douban.com/note/501905972/" target="_blank">[1]</a> 和 <a href="http://segmentfault.com/a/1190000002675667" target="_blank">[2]</a></p>
+
+<p>简单说，就是发送方启动是有个窗口大小（默认64K-1），发送了10K的DATA帧，就要在窗口里扣血（减掉10K），如果扣到0或者负数，就不能再发送；接收方收到后，回复WINDOW_UPDATE帧，里面包含一个窗口大小，数据发送方收到这个窗口大小，就回血，如果回血到正数，就又能发不超过窗口大小的DATA帧。</p>
+
+<p>默认nghttpx的两个<code>window-bits</code>都是16，也就是2^16-1=65535，如果一切顺利不丢包的情况下，RTT为100ms，则每秒最多能发送65535*(1000/100)的数据，大约就是500KB，刚好就是我一开始体验的速度。调到30后2^30-1=1,073,741,823，将近1GB的数据，所以同样100ms RTT时的理论上线就会是10GB/s左右。</p>
+
+<p>感觉H2的这个设计有点保守，记得05年的宽带才512K，10年后的今天100M并不罕见，不知道再过10年，这个理论上限会不会导致很多瓶颈，毕竟上一个HTTP版本用了不止10年。</p>
+
+<p>update: 其实在服务端设置会更好，毕竟很多h2的client是不方便设置window大小的</p>
+
+<pre>
+frontend-http2-window-bits=20
+frontend-http2-connection-window-bits=30
+</pre>

@@ -1,0 +1,11 @@
+---
+layout: post
+title: 'net/http: ReadResponse should return ErrUnexpectedEOF on truncated response
+  · Issue #6564 · golang/go'
+date: '2016-06-06T23:20:34+08:00'
+tags:
+- golang
+- http
+tumblr_url: http://blog.ayanamist.com/post/145509911041
+---
+<a href="https://github.com/golang/go/issues/6564">net/http: ReadResponse should return ErrUnexpectedEOF on truncated response · Issue #6564 · golang/go</a><br/><p>在MEOW上遇到同样的问题，访问肯德基宅急送网站 <a href="http://www.4008823823.com.cn/" target="_blank">http://www.4008823823.com.cn/</a> 他会返回一个301，然而却缺少结尾的CRLF就关闭连接了，导致报错parse response header: EOF</p><p>解决办法是，遇到io.EOF，强制往后走，反正后面也有合法性校验，见<a href="https://github.com/ayanamist/MEOW/commit/6b8b444d1c08c719ced62cfb3e72997ce2379974" target="_blank">6b8b444</a></p>

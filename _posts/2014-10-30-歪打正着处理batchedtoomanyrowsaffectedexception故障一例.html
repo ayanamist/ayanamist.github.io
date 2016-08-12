@@ -1,0 +1,30 @@
+---
+layout: post
+title: 歪打正着处理BatchedTooManyRowsAffectedException故障一例
+date: '2014-10-30T15:24:00+08:00'
+tags:
+- java
+- mysql-connector-java
+- hibernate
+- BatchedTooManyRowsAffectedException
+tumblr_url: http://blog.ayanamist.com/post/101324397246
+---
+<p>某应用使用了Hibernate连接MySQL。</p>
+
+<p>线上发现使用Hibernate批量save几百条数据时，会出现</p>
+
+<blockquote>
+  <p>org.hibernate.jdbc.BatchedTooManyRowsAffectedException: Batch update returned unexpected row count from update [0]; actual row count: 15; expected: 1</p>
+</blockquote>
+
+<p>之前这一块在测试环境下是没有问题的，对比了一下，发现线下环境QA偷懒使用了c3p0，线上则使用了TDDL（我们的业务因为历史原因，支持好几种DataSource）。</p>
+
+<p>让QA将线下环境也迁移到TDDL后，果断复现了这个问题。第一反应是TDDL的bug（没办法，之前印象不佳），升级到最新版依然无解，只好下断点一步步跟进去，发现本来应该返回15个内容为1的数组，却返回了15个内容为15的数组，导致Hibernate校验数据失败，抛出异常。15这个数字则是JDBC的配置，一次处理15条SQL。</p>
+
+<p>逐步运行，一直停到了mysql-connector-java里，用的是5.1.27，公司内部maven仓库和maven中央仓库都没有这个版本的，而用的IDEA13没有配反编译插件，确认中央仓库里5.1.33最新版有源码包，升级后，调试了几步，发现搞笑的事情来了：bug消失了！！！</p>
+
+<p>果断紧急发布到线上，果然也没问题了。</p>
+
+<p>具体原因其实还是不清楚，为什么之前c3p0下没事，可能是自己伪造的返回值返回给了Hibernate？</p>
+
+<p>这真是一例完全凭借RP解决故障的case啊……假如mysql-connector-java的5.1.27版本有源码，假如我用了自带反编译插件的IDEA14，那跟进去，就是无底洞了……</p>

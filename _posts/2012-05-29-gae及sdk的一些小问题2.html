@@ -1,0 +1,24 @@
+---
+layout: post
+title: GAE及SDK的一些小问题（2）
+date: '2012-05-29T20:45:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/23994067044
+---
+<p>Python里不可能不用import（当然我还真知道有同学以为Python鼓励单文件）</p>
+<p>但是在GAE的生产环境下（不是在SDK的launcher里），import的行为被更改了，但好像没在文档里提到。</p>
+<p>1、优先载入系统环境，而非项目环境的module<br/>这个问题给段代码好理解</p>
+<p>假设你在项目中不幸有一个locale.py，然后你不知道系统里也有个locale模块，于是幸手写下</p>
+<pre><code class="python">import locale</code></pre>
+<p>在本地是不存在任何问题的，但到GAE上就会出问题。因为此时import不是你的locale.py，而是系统的locale模块。这点和标准的Python行为是不一样的。</p>
+<p>解决办法当然是换个名字……</p>
+<p>2、当前路径不符合标准</p>
+<p>还是举例子</p>
+<p>项目里有两层目录，application目录里有lib和views两个目录，views下面有个login.py，lib里有个oauth.py。所有目录都有__init__.py初始化为模块。</p>
+<p>在login.py里使用</p>
+<pre><code class="python">from lib import oauth</code></pre>
+<p>在本地没有问题，在GAE上提示找不到oauth这个模块……</p>
+<p>改成</p>
+<pre><code class="python">from ..lib import oauth</code></pre>
+<p>后正常……</p>

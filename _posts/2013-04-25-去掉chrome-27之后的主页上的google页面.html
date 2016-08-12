@@ -1,0 +1,23 @@
+---
+layout: post
+title: 去掉Chrome 27之后的主页上的Google页面
+date: '2013-04-25T13:14:00+08:00'
+tags:
+- 技术
+- Chrome
+tumblr_url: http://blog.ayanamist.com/post/48835639028
+---
+<p><span>自从用上硬又黑的导航条后，Google的脑残驱动工作方式越来越强了。从Chrome 27开始，居然默认在新建标签页里加了个Google主页。搜索栏地址栏合一是你Chrome提倡的，现在又直接内嵌个Google搜索框……</span></p>
+<p><img alt="image" src="http://65.media.tumblr.com/1d8ccec13ffe02367b1bc724be1c677c/tumblr_inline_mlsoujvGaC1qz4rgp.png"/></p>
+
+<p>而且下面展示的，将证明这不是为了推广品牌，而是实实在在的脑残！</p>
+<p>发现这个设计后，自然要想办法去掉，用开发者工具可以看到这个页面的一些信息，于是用关键字去搜了下，发现相关内容都在chrome.dll这个文件里，尝试了几种修改，都去不掉。柳暗花明，想到里面有好多判断是不是Google搜索的代码，于是尝试着把设置里一直用的Google搜索换成Bing，然后换完，就发现开着的另一个新建标签页自己刷新成了Google页面，再新建一个标签，恢复正常了！！！！</p>
+<p><img alt="image" src="http://66.media.tumblr.com/297e8bcea373f1dc0df127824eecbd46/tumblr_inline_mlsp02uqDu1qz4rgp.png"/></p>
+
+<p>但是我前面文章也吐槽过了，目前Google搜索是最好用的，谁有bing才去用Bing。</p>
+<p>但既然可以用Bing，应该其它自定义的搜索引擎都可以，在搜索里先把默认的Google删掉，再找个可以修改的搜索引擎，按截图中修改，其中搜索串用https://www.google.com/search?q=%s</p>
+<p><img alt="image" src="http://66.media.tumblr.com/18274366e3dcc11bbd47645f65f9f28d/tumblr_inline_mlsp75x8QJ1qz4rgp.png"/></p>
+
+<p>设为默认。现在既可以去掉恶心页面，又可以继续用Google了</p>
+<p><strong>Update:</strong> 28.0.1495.0 canary 无法通过上述方法绕过，会检测搜索引擎字串里是否包含Google的网址，包含的话，就依旧显示恶心的搜索框。不过Canary版本变化很快，不排除过一段时间再次变化的可能。</p>
+<p><strong>Update:</strong> 刚发现，可以彻底恢复成Chrome26之前的样式。打开about:flags，把Enable Instant extended API这项设为disabled然后relaunch就好了。当然我个人因为不喜欢新建标签页上有App所以还是喜欢新版一点</p>

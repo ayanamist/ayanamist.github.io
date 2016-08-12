@@ -1,0 +1,21 @@
+---
+layout: post
+title: 完全禁用Android虚拟键盘
+date: '2012-07-23T00:32:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/27768184858
+---
+<p>这个有啥用呢，在部分竖屏直板全键盘机型，例如Moto的XT610、MT620、ME632这三个，使用百度输入法的时候，偶尔会出现，输入时弹出虚拟键盘的破事（有实体键盘你乱跳个啥）</p>
+<p>于是我就想了一些破办法，例如对某些常发程序进行修改，屏蔽他们调用虚拟键盘。不过还是略显麻烦，因为一更新就要重新修改，而且调用的地方多了，修改起来也是很累人的。</p>
+<p>于是我就想到了这个更为极端的做法，直接修改系统文件，让所有试图显示虚拟键盘的行为无效化，哈哈。</p>
+<p>果断先翻阅Android SDK，找到最终对应的方法是<a href="http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.4_r1/com/android/internal/view/IInputMethodManager.java#581" target="_blank">showSoftInput</a>，接下来就是找在系统中实现这个方法的文件。我可是人肉一个个文件翻出来dex2jar然后反编译jar文件看的呀……</p>
+<p>找到的文件是/system/framework/services.jar这个文件，解压出classes.dex，baksmali后，定位到com/android/server/InputMethodManagerService.smali，找到对应的代码，发现原来实际是调用showCurrentInputLocked这个方法。</p>
+<p>继续阅读，发现很简单，只要删去executeOrSendMessage这一连串调用的代码即可，连返回值都不用修改。</p>
+<p>果断删之，smali.jar编译回dex文件，放入jar后，替换进系统，设为644权限，root:root拥有后，重启。</p>
+<p>第一次重启需要重新构建cache，所以很慢，我等了好几分钟……</p>
+<p>进入后，果断打开Android Terminal Emulator，爽，虚拟键盘再也无法弹出了。</p>
+<p><strike>不过不知道什么原因，Titanium Backup和ProxyDroid报FC了，不过重新安装后就正常了。</strike></p>
+<p>更新：报FC的原因是用LuckyPatcher，做了破解的odex文件，然后系统层面文件变动，导致odex文件失效。在LuckyPatcher里restore一下再重新破解就好了。</p>
+<p>XT610的我直接扔了个现成的，<a href="http://bbs.gfan.com/android-4664792-1-1.html" target="_blank">http://bbs.gfan.com/android-4664792-1-1.html</a></p>
+<p>MT620的也有现成的，<a href="http://bbs.borqs.com/viewthread.php?tid=432" target="_blank">http://bbs.borqs.com/viewthread.php?tid=432</a></p>

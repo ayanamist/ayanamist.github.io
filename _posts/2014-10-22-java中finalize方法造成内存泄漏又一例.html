@@ -1,0 +1,21 @@
+---
+layout: post
+title: Java中Finalize方法造成内存泄漏又一例
+date: '2014-10-22T21:28:00+08:00'
+tags:
+- java
+- finalize
+- memory leak
+tumblr_url: http://blog.ayanamist.com/post/100665239036
+---
+<p>线上业务方某应用，用了我们的SDK后，出现内存大幅度上升，4G的Xmx未配MaxDirectMemorySize时都能冲到10G内存。</p>
+
+<p>做了个最小重现case，一开始无法重现，后来发现只要将这个原本能吃CPU2400%的进程，用cgroup绑定到一个CPU上，立马开始内存狂涨。</p>
+
+<p>Heap Dump后，用MAT分析，发现大量的内存被Finalizer所持有，再排查一下Finallizer引用了java.util.zip.Deflater对象，立马想到之前看过的这篇文章“<a href="http://www.majin163.com/2014/04/26/jvm-finalize/" target="_blank">JVM finalize实现原理与由此引发的血案</a>”，立马看了眼源码，果然也有Finalize方法，再一搜，已经<a href="http://www.devguli.com/blog/eng/java-deflater-and-outofmemoryerror/" target="_blank">臭名昭著</a>了。</p>
+
+<p>解决方法也很简单，继承一下Deflater类，覆盖finalize方法为空方法，然后手动控制（调用end方法）来解决。</p>
+
+<p>发生的原因，大体是因为finalize方法会造成一个额外的Finalizer对象引用，从而无法被GC，而Finalizer对象是放在一个Queue里由独立的<strong>优先级很低的</strong>的Finalier线程来释放引用。只有Finalizer对象被调用并释放了引用，才能让原对象被GC释放。</p>
+
+<p>而在我们的最小复现case中，一开始CPU资源充足，Finalizer线程是能有机会及时的清除引用的，但绑定在一个CPU上后，业务线程CPU吃紧，Finalizer线程就没有执行机会了，于是引用释放不掉，导致对象始终无法被GC，进而内存开始走高。</p>

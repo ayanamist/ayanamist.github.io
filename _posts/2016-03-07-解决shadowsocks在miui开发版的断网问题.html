@@ -1,0 +1,11 @@
+---
+layout: post
+title: 解决shadowsocks在MIUI开发版的断网问题
+date: '2016-03-07T14:47:19+08:00'
+tags:
+- android
+- shadowsocks
+- miui
+tumblr_url: http://blog.ayanamist.com/post/140616465501
+---
+<p>手贱，把小米4c升级到带BL锁的7.2.1版本，然后解锁又有问题，然后又谣传刷开发版才能解锁，于是又刷到开发版但依旧解不了，于是不想折腾了将就着用。然后就发现了<a href="https://github.com/shadowsocks/shadowsocks-android/issues/499" target="_blank">这个问题</a>。</p><p>这个问题在服务端其实蛮常见，既然还有进程活着，就想办法重新把进程拉起来好了，于是用Java写了个java.lang.Process的子类，启一个线程，进程退了就重新启动一下。</p><p>但这么写，发现进程是恢复了，但网络依旧是断的，感觉问题应该出在tun2socks上，看了下启动参数，没看出个名堂，于是往下再翻了下代码，发现进程起来后，会把vpn的fd通过sock传给tun2socks，于是加个回调，让恢复进程的时候也这样执行一下，果然网络恢复了</p><p>相关的PR在<a href="https://github.com/shadowsocks/shadowsocks-android/pull/594" target="_blank">这里</a>，成品apk在<a href="https://github.com/ayanamist/shadowsocks-android/releases" target="_blank">这里</a>，注意因为我没有官方的签名，所以需要卸载后重装。</p><p>update: 被强迫用scala重写了，然后果断踩中一个scala编译器的bug（见PR的评论），我踩坑小队长的名号绝非浪得虚名。scala真心难用，不愧是我当年学习后拉黑了的语言。</p>

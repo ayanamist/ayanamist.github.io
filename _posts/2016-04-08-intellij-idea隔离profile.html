@@ -1,0 +1,9 @@
+---
+layout: post
+title: IntelliJ IDEA隔离profile
+date: '2016-04-08T17:12:55+08:00'
+tags:
+- intellij idea
+tumblr_url: http://blog.ayanamist.com/post/142451892081
+---
+<p>需求是我想隔离我的java和golang开发环境，避免因为golang插件更新，导致所有项目都要reindex，在某些java项目上这是相当耗费时间的事情。</p><p>官方提供了修改配置目录的方案：<a href="https://intellij-support.jetbrains.com/hc/en-us/articles/207240985" target="_blank">https://intellij-support.jetbrains.com/hc/en-us/articles/207240985</a></p><p>将idea.properties复制一份；通过env命令配置IDEA_PROPERTIES环境变量指向新的文件来启动idea.sh</p>

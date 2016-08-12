@@ -1,0 +1,20 @@
+---
+layout: post
+title: Android手机上iptables实现高级hosts
+date: '2012-06-24T20:04:00+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/25777318580
+---
+<p>照常，本文并不是给小白写的傻瓜教程，看得懂就看，看不懂就自己去琢磨。</p>
+<p>在手机上经常要上一些国外的网站，用的最多的是Opera Mini。但基于众所周知的原因，Opera对中国IP和中文用户是用国内服务器代替的，于是很多网站就打不开。只好翻出去用。可惜Opera Mini从5.0开始就用到了两个服务器地址，而且默认还是用socket协议的。所以什么反向代理之流统统报废。</p>
+<p>原始的hosts方法，需要一个服务器就得有一台对应的主机，因为端口无法复用。</p>
+<p>这里所谓的高级hosts，就是在一台服务器上，通过不同的端口，加上iptables的OUTPUT重写，来提供类似hosts的效果。</p>
+<p>请先把iptables在手机上<a href="https://play.google.com/store/apps/details?id=com.mgranja.iptables" target="_blank">升级到最新</a>。</p>
+<p>在安装一个能自启动脚本的软件，我用的是<a href="https://play.google.com/store/apps/details?id=com.mgranja.iptables" target="_blank">DroidWall</a>，顺带管理下网络访问。</p>
+<p>在远程服务器上，打开端口转发，可以用iptables，也可以用3proxy的tcppm组件。</p>
+<p>手机上最好hosts固化指定的域名对应的IP，后面要进行匹配的。</p>
+<pre><code class="bash">$IPTABLES -t nat -A OUTPUT -p tcp -d 199.59.148.213 --dport 443 -j DNAT --to-destination XXX.XXX.XXX.XXX:XXX</code></pre>
+<p>这就是手机上对应的脚本，如果需要teardown脚本，把上面的-A改为-D即可。其中199.59.148.213就是upload.twitter.com的对应hosts，当然可以使用1.1.1.1这样无效的IP，毕竟只是匹配用，并不是真正用来访问的。</p>
+<p>最后加入自启动脚本，注意hosts可能要重启后才生效。然后就可以只用一台VPS完成所有的转发过程。</p>
+<p><strong>警告：明文协议，例如HTTP，极有可能导致服务器被封，转发请谨慎。</strong></p>

@@ -1,0 +1,12 @@
+---
+layout: post
+title: Bluetooth Keepalive
+date: '2012-11-14T23:10:00+08:00'
+tags:
+- Android
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/35706297754
+---
+<p>反编译了<a href="https://play.google.com/store/apps/details?id=org.floodping.BluetoothKeepalive&amp;hl=en" target="_blank">Bluetooth Keepalive</a>，代码很少，证实了我对它原理的猜测。不过它代码里用的<a href="http://developer.android.com/reference/android/os/PowerManager.html" target="_blank">WakeLock</a>不是<a href="http://developer.android.com/reference/android/os/PowerManager.html#PARTIAL_WAKE_LOCK" target="_blank">Partial</a>的，我试着改成了Partial后，一样运作的很好，不知道作者的为什么不用Partial。</p>
+<p>顺带反编译了豆瓣电台，发现它没用WakeLock，不知道为什么锁屏后也会继续运行，但蓝牙却会断开，很奇怪。有空把WakeLock加到它的Service里，这样就可以避免启动那个Bluetooth Keepalive了。当然最好的办法还是向豆瓣工程师汇报……</p>
+<p>Update: 向豆瓣汇报了，得到一个<a href="http://help.douban.com/help/questions/1160/" target="_blank">模板回答</a>……</p>

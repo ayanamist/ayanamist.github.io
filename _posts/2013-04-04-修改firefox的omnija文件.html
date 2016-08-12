@@ -1,0 +1,13 @@
+---
+layout: post
+title: 修改Firefox的omni.ja文件
+date: '2013-04-04T12:33:46+08:00'
+tags:
+- 技术
+- Firefox
+tumblr_url: http://blog.ayanamist.com/post/47085498428
+---
+<p>从Firefox 4开始Mozilla<a href="http://blog.mozilla.org/tglek/2010/09/14/firefox-4-jar-jar-jar/" target="_blank">改变</a>了omni.ja（曾经叫omni.jar）文件的结构。这个文件原本是个zip文件，Mozilla为了节约seek的次数从而提高启动性能，把没有使用标准的zip格式。</p>
+<p>当然这个问题当时也就在7-zip的论坛引起了<a href="http://sourceforge.net/p/sevenzip/bugs/1136/" target="_blank">讨论</a>，搞出这个所谓的“优化”结构的人来出来解释，旋即遭到Igor Pavlov（7-zip主力开发者）的质疑：这点优化能有多大作用，值得放弃兼容性吗？</p>
+<p>所以这也是为啥有时候7-zip无法打开omni.ja文件进行修改的原因。如果要修改的话，Mozilla官方也是给了<a href="https://developer.mozilla.org/en-US/docs/Mozilla/About_omni.ja_%28formerly_omni.jar%29" target="_blank">方法</a>，大体就是用能识别这种格式的解压工具，解压开后，重新压缩回标准的zip格式，Firefox也是能识别的。</p>
+<p>当然这样做的主要目的在于，我用的是tete009优化的第三方编译版本，默认名字不是Firefox而是Nightly，很丑啊有木有，所以必须改这个文件，把里面chrome/en-US/locale/branding这个目录下面的两个文件里的Nightly都改成Firefox……</p>

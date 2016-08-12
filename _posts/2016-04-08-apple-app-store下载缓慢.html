@@ -1,0 +1,11 @@
+---
+layout: post
+title: Apple App Store下载缓慢
+date: '2016-04-08T13:50:02+08:00'
+tags:
+- apple
+- app store
+- ios
+tumblr_url: http://blog.ayanamist.com/post/142446561811
+---
+<p>今天终于遇到了传说中的app store下载缓慢了，刚好开着surge，看了下，请求是很快返回了的，但header里提示走了CHN的CDN而且cache miss了，看来ChinaCache回源速度不行。</p><p>解决方法也比较简单，把 iosapps.itunes.apple.com 这个域名让surge走美国代理+远程DNS解析，速度回到3MB/s</p>

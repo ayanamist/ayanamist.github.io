@@ -1,0 +1,22 @@
+---
+layout: post
+title: KDE禁用任务栏上的滚轮事件
+date: '2014-05-19T11:25:32+08:00'
+tags:
+- linux
+- kde
+tumblr_url: http://blog.ayanamist.com/post/86177754106
+---
+<p>KDE4开始有个很恶心的设计：鼠标在任务栏上滚动，可以切换当前活跃窗口。为什么说这个设计很恶心，是因为触摸板上很容易误触发，即使用鼠标，光标放错位置，滚动了一下，也莫名其妙换了窗口，而且无法预测你滚了多少会切换几个窗口。</p>
+
+<p>于是开源社区险恶的面目暴露了出来：<a href="https://bugs.kde.org/show_bug.cgi?id=198661" target="_blank">Bug 198551</a>这个09年7月2号就提出来的bug，截至目前有931人投票支持，却从来没开发者出来吭过一声，下面都已经换了几拨人提供不同的patch方案。</p>
+
+<p>截至到目前，<a href="https://bugs.kde.org/show_bug.cgi?id=198661#c55" target="_blank">55楼</a>直接修改QML的方法是最简单靠谱的：</p>
+
+<blockquote>
+  <p>All you need to do is to open /usr/share/kde4/apps/plasma/packages/org.kde.plasma.tasks/contents/ui/Task.qml or its equivalent and at line 137 (the one which has &ldquo;onWheelMoved:&rdquo;), change it to</p>
+  
+  <p>onWheelMoved: {} /* Commented out code */</p>
+  
+  <p>Log out and in.</p>
+</blockquote>

@@ -1,0 +1,21 @@
+---
+layout: post
+title: 交叉编译stunnel
+date: '2013-04-22T17:17:00+08:00'
+tags:
+- 技术
+- Linux
+tumblr_url: http://blog.ayanamist.com/post/48602354480
+---
+<p>optware里的stunnel以及openssl都太老了，没办法配合我PC上的。决定自己重新编译一个。</p>
+<p>直接利用tomato源代码里的OpenSSL，在stunnel目录里</p>
+<pre><code>./configure --host=mipsel-linux-uclibc --disable-libwrap --with-threads=pthread --with-ssl=~/tomato/release/src-rt/router/openssl --prefix=/opt</code></pre>
+<p>放到路由器上，很不给面子的提示</p>
+<pre><code>stunnel: can't load library 'libssp.so.0'</code></pre>
+<p>Google一下，一开始走了弯路，想着disable-libssp，然后发现居然要重新编译gcc，工作量太大显然不可能。不死心，因为tomato里其它程序都没这个问题，找了一会，发现一个类似的情况发生在cups上，而且openwrt已经<a href="https://dev.openwrt.org/ticket/4115" target="_blank">解决</a>了。看了下他们的<a href="https://dev.openwrt.org/browser/packages/net/cups/patches/160-stack-protector.patch?rev=13044" target="_blank">补丁</a>，发现原来是禁用了CFLAGS的-fstack-protector。</p>
+<p>照葫芦画瓢，把stunnel里configure删掉相关部分，重新编译后，stunnel -h没有问题了，但是加载配置文件的时候又提示</p>
+<pre><code>undefined symbol FIPS_mode</code></pre>
+<p>然后想起configure的时候确实有提示</p>
+<pre><code>WARNING: OpenSSL fips header not found</code></pre>
+<p>搜了下，没找到什么好办法，这是个符号链接，即使把fips.h真实文件放到了正确的位置依旧如此提示。<strike>没辙，只好暴力方法，src/ssl.c中把关于FIPS_mode那一段（用USE_FIPS）包裹住的，全部删掉。</strike>其实configure的时候加个&ndash;enable-fips=no就可以了</p>
+<p>再重新编译，提示不支持压缩，想起配置文件里开了zlib压缩，应该是tomato的openssl里没有编译进zlib，算了，直接删掉配置文件里的相关配置，终于没问题，成功运行。</p>

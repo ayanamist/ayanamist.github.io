@@ -1,0 +1,9 @@
+---
+layout: post
+title: 更新RHEL 5系中的CA证书
+date: '2015-12-04T13:37:40+08:00'
+tags:
+- linux
+tumblr_url: http://blog.ayanamist.com/post/134510474261
+---
+<pre>sudo curl -k <a href="https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt" target="_blank">https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt</a> -o /etc/pki/tls/certs/ca-bundle.crt</pre>

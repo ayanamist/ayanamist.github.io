@@ -1,0 +1,13 @@
+---
+layout: post
+title: Why are there so many errors when I run apt-get upgrade?
+date: '2016-08-06T20:23:10+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/148539976231
+---
+<p>Some packages use features that we haven&rsquo;t implemented yet. <code>udev</code>, for example, isn&rsquo;t supported yet and causes several <code>apt-get upgrade</code> errors.</p><p>To fix issues related to <code>udev</code>, follow the following steps:</p><p>Write the following to <code>/usr/sbin/policy-rc.d</code> and save your changes.</p><pre><code>#!/bin/sh
+exit 101
+</code></pre><p>Add execute permissions to <code>/usr/sbin/policy-rc.d</code></p><pre><code>chmod +x /usr/sbin/policy-rc.d
+</code></pre><p>Run the following commands</p><pre><code>dpkg-divert --local --rename --add /sbin/initctl
+ln -s /bin/true /sbin/initctl
+</code></pre>

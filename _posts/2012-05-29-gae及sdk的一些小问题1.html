@@ -1,0 +1,13 @@
+---
+layout: post
+title: GAE及SDK的一些小问题（1）
+date: '2012-05-29T20:23:54+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/23993519283
+---
+<p>google_appengine/lib/fancy_urllib/fancy_urllib/__init__.py</p>
+<p>185行_create_connection函数，设计的很精巧，获取一个域名所有的IP后，挨个尝试访问，避免socket模块默认的connect只尝试第一个IP的二逼问题。</p>
+<p>这个设计是好的。</p>
+<p>问题是，这个设计会忽略hosts文件的效果，在兲朝，hosts可是翻墙的一种方式。而网站有IP失效不能访问的几率却是非常的小。</p>
+<p>解决办法当然是把这个精巧的设计注释掉，暴力的_create_connection = socket.create_connection</p>

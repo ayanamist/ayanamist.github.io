@@ -1,0 +1,9 @@
+---
+layout: post
+title: QQ输入法纯净版5.X使用4.7的造词工具
+date: '2015-08-08T00:04:52+08:00'
+tags:
+- qq拼音
+tumblr_url: http://blog.ayanamist.com/post/126101851651
+---
+<p>QQ输入法最好用的地方就是这个造词工具，遇到人名地名或生僻词，直接复制粘贴，下次就可以很容易打出来，也不再需要蛋疼的去选字造词了。但不知道为什么这么好用的功能，其它输入法为什么不跟进。</p><figure data-orig-width="286" data-orig-height="392"><img src="http://67.media.tumblr.com/0c4b8ad49bb3d034e7144d63a1a4a4e3/tumblr_inline_nsrafc8YqS1qe60vn_540.png" alt="image" data-orig-width="286" data-orig-height="392"/></figure><p>之前一直在用4.7传统版，这个版本有个问题，就是在某些场景下，输入中文时前面会多一个空格，在某些场景下就非常的难受。今天发现纯净版从1.0直接跳到5.0版本了，于是试了下，发现这个问题没有了。但造词工具也跟着没有了T_T</p><p>然后就想办法看能不能让造词工具用起来，发现4.7覆盖安装5.0的时候，造词工具那个QQPYMakeWord.exe其实是可以用的，但在4.7里用uninst.exe卸载掉4.7的文件后，虽然能启动，但造词时出不了拼音了。猜想是要依赖别的文件。</p><p>用Process Monitor监控了下，发现居然卸载后启动QQPYMakeWord.exe还是会访问已经不存在的4.7目录，搜了下注册表也没有发现残余内容。只好一条条的看到底干了什么，发现访问了HKLM\SOFTWARE\Wow6432Node\Tencent\QQPinyin\InstallDir拿了安装目录后，就开始访问C:\Program Files (x86)\Tencent\QQPinyin\4.7.2065.400下的东西了，但相关注册表里并没有这个版本号，因此猜想应该是代码里直接限定死了，必须访问相同版本号的目录。这个好办，做个Junction，在C:\Program Files (x86)\Tencent\QQPinyin把5.0.2012.400链接到4.7.2065.400就好了。</p><p>接着可以利用Windows自己的快捷方式热键，把原来的Ctrl+Alt+=恢复出来</p><figure data-orig-width="377" data-orig-height="516" class="tmblr-full"><img src="http://66.media.tumblr.com/cdb688ec6fd9126470755154c26c40f8/tumblr_inline_nsrae5s4fl1qe60vn_540.png" alt="image" data-orig-width="377" data-orig-height="516"/></figure><p>蛋疼的再试试到底是依赖哪个文件，一个个把访问的文件重命名后，终于发现是依赖bihua.dat这个文件，也真是毫无关系的文件名啊。</p><p>另外发现QQ拼音小字典QQPYDict.exe这样弄了后也能正常工作了，真是可喜可贺。</p><p>update: 使用一段时间后，发现，还依赖abcbihua.dat和core.dict文件，否则会有奇奇怪怪的问题。</p>

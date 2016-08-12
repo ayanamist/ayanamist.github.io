@@ -1,0 +1,26 @@
+---
+layout: post
+title: 小心GreaseMonkey里的window
+date: '2013-04-27T10:08:00+08:00'
+tags:
+- javascript
+- 技术
+- GreaseMonkey
+tumblr_url: http://blog.ayanamist.com/post/48973796784
+---
+<p><strike>这是写Twitter RT脚本的时候发现的。</strike></p>
+<p><strike>之前采用了这样一种性能优化方式：</strike></p>
+<pre><strike><code>(function(window){
+  var Array = window.Array;
+})(window);
+</code></strike></pre>
+<p><strike>然后在Firefox中却提示Array is undefined，很莫名。用console.log把window打印出来才发现里面所有大写开头的变量全部不存在。不知道是怎么回事。想起来Twitter的页面代码全部是用this.Array来代替window.Array的，估计也是避免类似的情况。</strike></p>
+<p><strike>只好放弃了这种优化来保证Firefox兼容性。</strike></p>
+<p>Update: 浪费了早上宝贵的一个多小时，逐行排查，终于发现真正的原因。</p>
+<p>用了GM_addStyle后，好像运行环境变了，于是Array和Math就都从window对象里消失了。</p>
+<p>给GreaseMonkey提了个<a href="https://github.com/greasemonkey/greasemonkey/issues/1735" target="_blank">issue</a>，也不知道会不会修好。</p>
+<p>Update2: 这个问题应该不会修正，根据MDN对Global对象的<a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects" target="_blank">描述</a>，并没有提到可以通过window对象访问，而是要在全局作用域的时候访问this才行。</p>
+<blockquote>
+<p>The global object itself can be accessed by this in the global scope.</p>
+</blockquote>
+<p>把测试脚本改了一下，果然是正常的。熟读文档才是王道。</p>

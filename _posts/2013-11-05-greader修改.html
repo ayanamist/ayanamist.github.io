@@ -1,0 +1,40 @@
+---
+layout: post
+title: gReader修改
+date: '2013-11-05T09:00:00+08:00'
+tags:
+- android
+tumblr_url: http://blog.ayanamist.com/post/66046169123
+---
+<p>年初的时候以为<a href="http://play.google.com/store/apps/details?id=com.noinnion.android.greader.reader" target="_blank">gReader</a>不更新了，曾经修改过一次，后来不仅更新了，还大幅度修改了UI。</p>
+
+<p>最近实在受不了每次打开feed内容时都要等那个无用的favicon出来后页面才会重排的问题，于是又打算修改。</p>
+
+<p>这次特意小心的查了下，发现这货还是<a href="https://github.com/noinnion/greader/" target="_blank">在更新的</a>。作者很不厚道的把github当网盘了，不过也省却我到处找apk的麻烦事。</p>
+
+<p>为了避免过一段时间忘了修改哪些地方，特写此文标记一下。</p>
+
+<p>不用<a href="http://forum.xda-developers.com/showthread.php?t=1574401" target="_blank">Xposed</a>框架来修改的原因是，gReader这玩意儿代码隔离不好，添加favicon的代码是混杂在某个方法里一大坨代码里面的，无法用简单的替换方法来实现。</p>
+
+<p>成品在<a href="http://sdrv.ms/1aASmU4" target="_blank">http://sdrv.ms/1aASmU4</a>。</p>
+
+<hr><blockquote>
+  <p>com\noinnion\android\greader\reader\ui\ItemActivity$BodyWebViewClient.smali
+  com\noinnion\android\greader\reader\ui\fragment\ItemTabletFragment$BodyWebViewClient.smali</p>
+</blockquote>
+
+<p>这两个文件中的<code>shouldOverrideUrlLoading</code>方法控制feed内容中的超链接处理方式。
+修改<code>if-nez v0, :cond_0</code>为<code>goto :cond_0</code></p>
+
+<hr><blockquote>
+  <p>com\noinnion\android\greader\reader\Prefs.smali</p>
+</blockquote>
+
+<p>该文件中的<code>hasProAccess</code>方法控制是否是Pro版，v0直接改成0x1即可</p>
+
+<hr><blockquote>
+  <p>com\noinnion\android\greader\reader\ui\ItemActivity.smali</p>
+</blockquote>
+
+<p>该文件中的<code>createBodyHtml</code>方法，判断其中<code>.local v3, favicon:Ljava/lang/String;</code>的值是否为零，来控制favicon的显示
+直接将下面的<code>if-eqz v3, :cond_4</code>改为<code>goto :cond_4</code></p>

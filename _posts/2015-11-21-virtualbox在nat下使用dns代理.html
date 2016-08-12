@@ -1,0 +1,17 @@
+---
+layout: post
+title: VirtualBox在nat下使用DNS代理
+date: '2015-11-21T15:41:34+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/133643618076
+---
+<p>VB的nat模式和VMware Workstation的很不一样，居然是默认把主机上的DNS透传到guest里的，于是在安全控制很严格的地方，因为mac地址校验不通过，妥妥的就上不了网了。</p>
+
+<p>解决办法是来源中提到的，在VM关闭的情况下，开启DNS代理：</p>
+
+<pre>
+VBoxManage modifyvm "VM name" --natdnsproxy1 on
+VBoxManage modifyvm "VM name" --natdnshostresolver1 on
+</pre>
+
+<p>不过还是略麻烦，毕竟每新建一个VM都要这样改一下……</p>

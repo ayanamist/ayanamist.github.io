@@ -1,0 +1,16 @@
+---
+layout: post
+title: FeedBurner曲线救国
+date: '2012-10-19T20:34:10+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/33890198840
+---
+<p>自从FeedBurner出问题后，就一直想找个解决办法。</p>
+
+<p>先是直接暴露RSS地址给Google Reader订阅，不过发现速度太慢，三个小时才刷一次。</p>
+
+<p>然后打<a href="https://code.google.com/p/pubsubhubbub/" target="_blank">PubSubHubbub协议</a>的主意，但Google的项目主页上关于如何建hub的部分写的实在是很模糊，而提供的<a href="http://pubsubhubbub.appspot.com/" target="_blank">官方pub</a>又经常不能推送。</p>
+
+<p>绝望之时，发现FeedBurner页面的Troubleshootize页面里有个<a href="http://feedburner.google.com/fb/a/ping" target="_blank">pinging FeedBurner</a>的页面，可以手动让FeedBurner抓取一次Feed。试了一下，还是正常运作的。</p>
+
+<p>果断写了个小脚本，自动的访问这个，让它每隔十分钟抓一下。RSS导出总算正常了。</p>

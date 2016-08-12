@@ -1,0 +1,9 @@
+---
+layout: post
+title: 清理Windows的Installer目录
+date: '2015-08-08T16:40:00+08:00'
+tags:
+- Windows
+tumblr_url: http://blog.ayanamist.com/post/126162657261
+---
+<p>Windows用久了，确实磁盘会占不少，下面是用<a href="http://www.uderzo.it/main_products/space_sniffer/" target="_blank">SpaceSniffer</a>扫出来的</p><figure data-orig-width="1600" data-orig-height="860" class="tmblr-full"><img src="http://67.media.tumblr.com/5604a455e2a1880fdb02d1e05bae3521/tumblr_inline_nsr94rIKA31qe60vn_540.png" alt="image" data-orig-width="1600" data-orig-height="860"/></figure><p>可以看到Windows目录本身在使用了一年半后，占用了近36GB的空间，而其中一半又是被Installer目录占用的。</p><p>网上搜了下，SuperUser上是有个<a href="http://superuser.com/questions/707767/how-can-i-to-free-up-drive-space-from-the-windows-installer-folder-without-killi" target="_blank">关于怎么清理这个目录的讨论</a>的。看来<a href="http://blogs.technet.com/b/joscon/archive/2012/01/18/can-you-safely-delete-files-in-the-windir-installer-directory.aspx" target="_blank">没有官方方法</a>能清理这个目录；安全第一的话，可以把文件全部挪到别的分区上，然后用符号链接指回来。也可以用<a href="http://appnee.com/wicleanup/" target="_blank">WICleanup</a>这个小工具弄，不过这个小工具操作极其麻烦，不能全选只能一个个选中，然后删除时再一个个的确认，从结果看，实际上把我机器上这个目录里的所有msi和msp文件都删了……</p><p>update: 发现使用了WICleanup后，很多程序都出问题了，Evernote无法卸载无法升级，必须要找到同版本的安装程序重装后才能恢复正常，还不知道其它影响。慎用。</p>

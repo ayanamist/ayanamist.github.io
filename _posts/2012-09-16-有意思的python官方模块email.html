@@ -1,0 +1,22 @@
+---
+layout: post
+title: 有意思的Python官方模块email
+date: '2012-09-16T19:16:15+08:00'
+tags:
+- 吐槽
+- Python
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/31651044198
+---
+<p>依旧是在读Tornado的代码，读到auto.py这个自动重新加载文件的小工具，发现一段眼睛一亮的话</p>
+<blockquote>
+<p>Some modules play games with sys.modules (e.g. email/__init__.py in the standard library), and occasionally this can cause strange failures in getattr.  Just ignore anything that&rsquo;s not an ordinary module.</p>
+</blockquote>
+<p>于是便非常好奇的去翻了下这个文件，果然发现精彩内容。</p>
+<p>原来里面有个LazyImporter，把Charset、Encoders、Errors、FeedParser、Generator、Header、Iterators、Message、Parser、Utils、base64MIME、quopriMIME这几个子模块替换了，再把email.mime里的Audio、Base、Image、Message、Multipart、NonMultipart、Text也替换了。而LazyImporter的作用就是，只有在真正使用这个模块的内容的时候再加载这个模块。</p>
+<p>这么做的原因在上面的函数message_from_string有注释</p>
+<blockquote>
+<p>Some convenience routines.  Don&rsquo;t import Parser and Message as side-effects of importing email since those cascadingly import most of the rest of the email package.</p>
+</blockquote>
+<p>我就好奇的看了下这个模块究竟有多大，包括了编译后的pyc文件，整个文件夹才626KB，其中还包括了348KB的test文件。这和pytz这样的比起来实在算不上大。就算全部加载了也不会怎么样啊。</p>
+<p>我又好奇的测了测，不用LazyImporter会有多大差别。起一个Python，然后import email，import email.message，import email.parser，不用的话，内存从4.3MB占用上升到5.3MB，用的话，则是5.2MB……就是100KB内存占用的差别……</p>

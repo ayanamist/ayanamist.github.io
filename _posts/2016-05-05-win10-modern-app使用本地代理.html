@@ -1,0 +1,11 @@
+---
+layout: post
+title: Win10 Modern App使用本地代理
+date: '2016-05-05T15:44:13+08:00'
+tags:
+- win10
+- proxy
+- Twitter
+tumblr_url: http://blog.ayanamist.com/post/143883581861
+---
+<p>问题来源于想用Twitter的App，发现怎么设代理都不顶用，搜了下，最后发现居然是Win10的feature/bug</p><p>解决方案是用Windows 8 AppContainer Loopback Utility解除这个限制，然后再在Setting里设上代理就好了</p><p>不过这种App貌似不是直接访问网络的，用Proxifier把Twitter那个exe劫持掉并没有效果，还需要研究下。</p>

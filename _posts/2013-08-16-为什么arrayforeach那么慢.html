@@ -1,0 +1,21 @@
+---
+layout: post
+title: 为什么Array.forEach那么慢
+date: '2013-08-16T13:02:00+08:00'
+tags:
+- javascript
+tumblr_url: http://blog.ayanamist.com/post/58396408400
+---
+<p>搞js的人都知道，Array.forEach比for loop要慢，很多情况下都是慢一倍左右，今天好奇为什么会慢，因为完全可以JIT的时候展开为一个for loop的。</p>
+<p>于是翻了一下<a href="https://code.google.com/p/v8/source/browse/trunk/src/array.js?r=10737#1061" target="_blank">v8源代码</a>，发现</p>
+<blockquote>
+<p>if (!IS_UNDEFINED(current) || i in array) {</p>
+</blockquote>
+<p>在执行callback之前会判断这个元素是否为undefined，而且用了双保险的方法，真是这个i in array导致了性能的大幅度衰减，不过这也是为了符合MDN上关于Array.forEach代码的<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" target="_blank">行为规范</a>：</p>
+<blockquote>
+<p>It is not invoked for indexes which have been deleted or which have been initialized to undefined.</p>
+</blockquote>
+<p>不过又找到一个很有意思的<a href="http://jsperf.com/native-for-loop-vs-array-foreach-and-array-map-vs-lodas/6" target="_blank">jsperf结果</a>，某些库如<a href="http://lodash.com/" target="_blank">Lo-Dash</a>的foreach居然比for loop还要快！</p>
+<p>于是果断去翻了一下它的代码，发现它其实唯一的区别就是<a href="https://github.com/bestiejs/lodash/blob/37d4e23edc265e1950b9552dc71a6e3a1167082a/lodash.js#L3309" target="_blank">用的while loop</a>。</p>
+<p>于是又翻了一个<a href="http://jsperf.com/while-vs-for-queue" target="_blank">jsperf结果</a>，虽然上面显示的现有测速结果是差不多，但我用自己的Chrome 28.0.1500测，是有30%左右的性能差别的，while loop要更快一些。还是很有意思的一件事～</p>
+<p>Update: <a href="https://twitter.com/zyxar" target="_blank">@zyxar</a> 同学<a href="https://twitter.com/zyxar/status/368272113045475328" target="_blank">提到</a>，是因为Lo-Dash<a href="https://github.com/bestiejs/lodash/blob/37d4e23edc265e1950b9552dc71a6e3a1167082a/lodash.js#L3514" target="_blank">提前分配了Array</a>，然后提供了一个证明的<a href="http://jsperf.com/native-for-loop-vs-array-foreach-and-array-map-vs-lodas/10" target="_blank">jsperf</a>。我也创建了<a href="http://jsperf.com/native-for-loop-vs-array-foreach-and-array-map-vs-lodas/11" target="_blank">另一个jsperf</a>，在不保存结果的情况下，for-loop是最快的，但Lo-Dash的性能也只差一点。</p>

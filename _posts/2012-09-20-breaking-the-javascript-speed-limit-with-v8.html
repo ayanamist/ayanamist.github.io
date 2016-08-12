@@ -1,0 +1,43 @@
+---
+layout: post
+title: Breaking the JavaScript Speed Limit with V8 - Google IO 2012
+date: '2012-09-20T14:09:36+08:00'
+tags:
+- Javascript
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/31911031086
+---
+<a href="http://v8-io12.appspot.com/">Breaking the JavaScript Speed Limit with V8 - Google IO 2012</a><br/><p>The Optimization Checklist</p>
+<ul><li>Be prepared before you have a problem</li>
+<li>Identify and understand the crux of your problem</li>
+<li>Fix what matters</li>
+</ul><p>What does &ldquo;Be Prepared&rdquo; mean for V8?</p>
+<ul><li>Understand how V8 optimizes JavaScript</li>
+<li>Write code mindfully</li>
+<li>Learn your tools and how they can help you</li>
+</ul><p>Hidden Classes Make JavaScript Faster</p>
+<ul><li>V8 internally creates hidden classes for objects at runtime</li>
+<li>Objects with the same hidden class can use the same optimized generated code</li>
+</ul><p>Avoid the speed trap</p>
+<ul><li>Initialize all object members in constructor functions</li>
+<li>Always initialize object members in the same order</li>
+<li>Prefer numeric values that can be represented as 31-bit signed integers</li>
+<li>Use contiguous keys starting at 0 for Arrays</li>
+<li>Don&rsquo;t pre-allocate large Arrays (e.g. &gt; 64K elements) to their maximum size, instead grow as you go</li>
+<li>Don&rsquo;t delete elements in arrays, especially numeric arrays</li>
+<li>Don&rsquo;t load uninitialized or deleted elements</li>
+<li>Initialize using array literals for small fixed-sized arrays</li>
+<li>Preallocate small arrays to correct size before using them</li>
+<li>Don&rsquo;t store non-numeric values (objects) in numeric arrays</li>
+<li>Prefer monomorphic over polymorphic wherever possible</li>
+<li>Optimizing compiler &ldquo;bails-out&rdquo; on functions with try {} catch {} blocks</li>
+<li>Avoid hidden class changes in functions after they are optimized</li>
+</ul><p>Double (type) Array Unboxing</p>
+<ul><li>Array&rsquo;s hidden class tracks element types</li>
+<li>Arrays containing only doubles are unboxed</li>
+<li>Unboxing causes hidden class change</li>
+<li><strong>Careless manipulation of Arrays can cause extra work due to boxing and unboxing, initialize a mixed type array other than set items one by one</strong></li>
+</ul><p>Monomorphic Better Than Polymorphic</p>
+<ul><li>Operations are monomorphic if the hidden class is always the same</li>
+<li>Otherwise they are polymorphic</li>
+</ul>

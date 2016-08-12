@@ -1,0 +1,18 @@
+---
+layout: post
+title: Word与等宽字体
+date: '2013-05-23T18:54:10+08:00'
+tags: []
+tumblr_url: http://blog.ayanamist.com/post/51140915797
+---
+<p>原本是<a href="https://twitter.com/upsuperx" target="_blank">@upsuperx</a>的<a href="https://twitter.com/upsuperx/status/337470112875552768" target="_blank">一条推</a>：</p>
+<blockquote>
+<p>如果最近我死了，一定是被 Word for Mac 气死的 - - <a href="http://i5.minus.com/iE0IHHakKF9aT.png" target="_blank">http://i5.minus.com/iE0IHHakKF9aT.png<br/><img src="http://66.media.tumblr.com/477ecad82f4dbb07ef5bf0fc7bb55903/tumblr_inline_mn8yvd11Nn1qz4rgp.png"/></a></p>
+</blockquote>
+<p>然后发现一些很有意思的东西：</p>
+<p><img src="http://65.media.tumblr.com/d00f0688811c5ea97bdd4ac24e1b13fb/tumblr_inline_mn8yywZhQG1qz4rgp.png"/></p>
+
+<p>上图是Word 2013（设简体中文为主要编辑语言）中12号字下，各种等宽字体的表现。可以发现英文等宽字体对空格的渲染都有问题，但中文却没有问题。</p>
+<p>为了检查，究竟是对英文字体统一处理了，还是对某些白名单字体处理了，用<a href="http://en.wikipedia.org/wiki/Bitstream_Vera" target="_blank">Bitstream Vera字体</a>试了下，效果一样。把主要编辑语言改为英文后未变化。</p>
+<p>比较奇怪的是，一定有的Win下等宽字体Fixedsys、Courier、Terminal在Word中都是不可用的。</p>
+<p>猜测应该还是Word为了简化排版，压缩了空格的宽度，就如同压缩了行尾的中文标点一样。</p>

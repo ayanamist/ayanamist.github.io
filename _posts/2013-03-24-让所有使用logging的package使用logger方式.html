@@ -1,0 +1,30 @@
+---
+layout: post
+title: 让所有使用logging的package使用logger方式
+date: '2013-03-24T21:17:28+08:00'
+tags:
+- 技术
+- Python
+tumblr_url: http://blog.ayanamist.com/post/46156520732
+---
+<p>logging是Python中的日志系统，非常强大。但不少模块只是在import后简单的使用logging.debug|warning|error|exception来处理，对于一个规模稍微大一点的项目来说，最后日志中混乱的记录简直就是噩梦。</p>
+<p>logging是提供了这种问题的解决方案的——logger。只需要logging.getLogger就可以获取一个名字的logger，并且支持以英文小数点进行分级控制。</p>
+<p>但是第三方库却又很多不这样用的。没错，说的就是你<a href="https://github.com/idan/oauthlib" target="_blank">oauthlib</a>。每次生成签名的时候还都要debug一堆。</p>
+<p>当然，简单的把代码改为logger方式是可行的，但是不是个好方法：</p>
+<ul><li><span>工作量很大，你只能手动搜索使用了logging的模块，肉眼分析使用方式，然后修改。</span></li>
+<li><span>第三方库日后的更新会带来很多问题。哪怕用了git的分支，merge的时候也不是永远100%正确的。</span></li>
+</ul><p>所以理想的方式，是直接替换logging模块里的debug|warning|error|exception函数，让调用这些函数时就自动使用logger方式。</p>
+<p>下面直接给出我的实现：</p>
+<pre><code>def logger_wrap(func):
+    def logger_wrapped(*args, **kwargs):
+        caller_frame = inspect.currentframe().f_back
+        caller_name = caller_frame.f_globals["__package__"]
+        logger = logging.getLogger(caller_name)
+        getattr(logger, func.__name__)(*args, **kwargs)
+
+    return logger_wrapped
+
+for func_name in ("critical", "error", "exception", "warn", "warning", "info", "debug", "log"):
+    setattr(logging, func_name, logger_wrap(getattr(logging, func_name)))
+</code></pre>
+<p>注意不能简单的使用__name__来获取，必须用inspect来实现。这个实现借鉴了<a href="http://stackoverflow.com/questions/750702/retreiving-printing-execution-context" target="_blank">Retreiving/Printing execution context</a>这里的思路。</p>

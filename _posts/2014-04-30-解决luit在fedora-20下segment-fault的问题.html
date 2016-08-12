@@ -1,0 +1,22 @@
+---
+layout: post
+title: 解决luit在Fedora 20下Segment Fault的问题
+date: '2014-04-30T17:14:00+08:00'
+tags:
+- linux
+- gbk
+- luit
+tumblr_url: http://blog.ayanamist.com/post/84309439821
+---
+<p>起因是手贱，听人说水木社区可以用SSHv1登录，于是上去转了转，悲哀的发现是GBK编码的，于是只好弄出luit</p>
+
+<p><code>luit -encoding gbk ssh -1 newsmth.net</code></p>
+
+<p>居然告诉我segmentation fault</p>
+
+<p>搜了搜，发现<a href="http://luy.li/2008/10/15/luit_ok/" target="_blank">一篇类似问题的文章</a>。照葫芦画瓢也strace了一把，发现我压根没有<code>/usr/share/fonts/X11/encodings/</code>这个目录……</p>
+
+<p>搜了下，Fedora下是<a href="http://pkgs.org/fedora-20/fedora-i386/xorg-x11-fonts-misc-7.5-9.fc20.noarch.rpm.html" target="_blank">xorg-x11-fonts-misc</a>这个包，但装了后发现还是没这个目录，仔细看了看，原来Fedora这个包提供的是<code>/usr/share/X11/fonts</code>，只好<code>ln -s</code>一把，然后总算成功了～</p>
+
+<p>不过试了一下luit，效果不如screen的defencoding，有略微的错位……
+错位的原因<a href="http://pt0079.blogspot.jp/2011/05/gnu-screen-encodingbbs.html" target="_blank">这篇文章</a>里有介绍，大体就是计算宽度出错了……</p>

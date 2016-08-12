@@ -1,0 +1,69 @@
+---
+layout: post
+title: 华为C8950D通话录音的自动启动
+date: '2013-01-10T20:27:00+08:00'
+tags:
+- android
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/40170482507
+---
+<p><strong>警告：看到有坛友把这个弄成成品发布，其实这个方法有个大bug：接电话的时候可能会自动重启！</strong><strong>并且可能会导致电话打不进来始终提示无法接通！</strong></p>
+<p>本篇只是记录一下这个修改的全部过程，毕竟花了好几天的功夫。</p>
+<p><strong>敬告，本文只是自动启动了原本就有的通话录音功能，并不是凭空添加了通话录音功能</strong></p>
+<p>这个修改的原因是，所有的第三方通话录音App都只能录到第一个可用的modem，于是在双卡双待的情况下，只有CDMA的电话才会被录音，GSM的是不会被录音的。尝试了把相关逆向工程的东西联系Total Recorder和Record My Call的作者，可惜均无响应</p>
+<p>首先按这里<a href="http://code.google.com/p/smali/wiki/DeodexInstructions" target="_blank">deodex文件出smali码</a></p>
+<p>按<a href="http://stackoverflow.com/a/12457005/522024" target="_blank">这里</a>的操作打开手机的logging，在这里就折腾很久，看不到logcat，根本不知道强制关闭的时候发生了什么。</p>
+<p>用adb logcat -v time监控，反复拨打10086和10000，来看接通时Phone.apk发生的日志事件，确定代码主要在InCallFragment.java这个文件里。</p>
+<pre><code>
+handlePostOnDialChar: state = COMPLETE, ch =
+</code></pre>
+<p>这是在接通时发生的一连串事件。定位到这堆代码，然后再联系接通时手机会振动一下，找到handlePostOnDialChars类方法的这句</p>
+<p>this.mVibrator.vibrate(30L);</p>
+<p>把相关代码加入到振动代码后面</p>
+<pre><code>
+invoke-direct {p0}, Lcom/android/phone/InCallFragment;-&gt;voiceRecordClick()V
+</code></pre>
+<p>这样修改后只有GSM拨出时有效，CDMA拨出无效。再用vibrate搜了一下，原来在另外一个闭包里还有一个。</p>
+<p>但smali的闭包不好修改，因为闭包被编译为另外一个内部类了直接访问外部类的private方法会报非法。</p>
+<p>在InCallFragment.smali中添加</p>
+<pre><code>
+.method static synthetic access$1105(Lcom/android/phone/InCallFragment;)V
+.registers 1
+.parameter "x0"
+
+.prologue
+.line 121
+invoke-direct {p0}, Lcom/android/phone/InCallFragment;-&gt;voiceRecordClick()V
+
+return-void
+.end method
+</code></pre>
+<p>这样有了delegator后就可以从内部类里用voiceRecordClick方法了。然后在InCallFragment$6.smali的vibrate方法后添加</p>
+<pre><code>
+iget-object v6, p0, Lcom/android/phone/InCallFragment$6;-&gt;this$0:Lcom/android/phone/InCallFragment;
+invoke-static {v6}, Lcom/android/phone/InCallFragment;-&gt;access$1105(Lcom/android/phone/InCallFragment;)V
+</code></pre>
+<p>这样在呼出时不管是GSM还是CDMA都会录音了，不过CDMA的在挂断时不会提示存储路径，但实际是生成了文件的。</p>
+<p>可是呼入怎么办……</p>
+<p>一开始的思路是不要求一次启动录音成功，多启动几次，利用多次出现的 - phone state = OFFHOOK时才在其下面（.line 1203上面）加上强行开始录音的代码，这样CDMA可以录音，GSM拨打就自动重启……</p>
+<p>换个地方加代码，加在updateDialpadVisibility: dialpad dismissed, show mInCallPanel后面，结果怎么弄都是VerifyError</p>
+<p>再换个思路，internalAnswerCall()是GSM和CDMA都会用到的接听方法，加了点log，发现虽然有好几个地方调用，但一般是handleOnscreenButtonClick()这个方法里的。但在这个方法后面添加启动录音的代码，却打开设备失败。想用延迟启动的方法postDelay，结果调用mHandler的任何方法都是VerifyError。把延迟启动的方法换到别的地方一样失败。为了这个延迟启动，还用smali写了个闭包……</p>
+<p>再换个思路，因为有第三方的录音软件可以在呼入呼出时录音，所以找了下相关的API，onPhoneStateChanged这个方法，OFFHOOK时是在通话。不过在这个地方加入相关代码，呼入呼出都正常了，GSM呼出却又自动重启了……</p>
+<p>最后只好加了一点代码，判断是不是GSM的呼出，是的话就不在这里启动录音，而在后面的handlePostOnDialChars那里再启动，总算成功了。为了保证一定是启动录音，把voiceRecordClick方法重构为了voiceRecordStart和voiceRecordStop两个方法……</p>
+<p>全部的修改都在<a href="https://github.com/ayanamist/C8950D-Phone.apk" target="_blank">这个GitHub仓库</a>里，master是成功的修改，其它几个分支都是失败的。<strong>请不要偷懒直接使用这里的smali码生成Phone.apk文件，很可能和ROM不兼容</strong></p>
+<p>另外为了方便测试，还写了个cmd脚本，在修改后自动smali然后推送到手机再重启。</p>
+<pre><code>java -jar smali.jar -a 15 -o classes.dex smali
+if errorlevel 1 (
+   goto fail
+)
+7z a Phone.zip classes.dex &amp;&amp; java -jar signapk.jar testkey.x509.pem testkey.pk8 Phone.zip Phone.apk &amp;&amp; adb shell mount -o remount,rw /system &amp;&amp; adb push Phone.apk /system/app/ &amp;&amp; adb reboot
+if errorlevel 1 (
+   goto fail
+)
+goto success
+
+:fail
+pause
+:success
+exit /b %errorlevel%
+</code></pre>

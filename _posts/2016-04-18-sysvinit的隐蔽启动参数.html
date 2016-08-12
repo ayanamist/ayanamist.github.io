@@ -1,0 +1,10 @@
+---
+layout: post
+title: sysvinit的隐蔽启动参数
+date: '2016-04-18T10:07:20+08:00'
+tags:
+- docker
+- sysvinit
+tumblr_url: http://blog.ayanamist.com/post/142983903111
+---
+<p>sysvinit里有个undocumented启动参数-i/&ndash;init，在自己pid不为1时依旧强制作为init启动。翻代码时才发现的，文档里没有写，网上貌似也没搜到过。</p><figure class="tmblr-full" data-orig-height="184" data-orig-width="488"><img src="http://67.media.tumblr.com/133f240a81c710b5db93f99da57361cb/tumblr_inline_o5t4gnSdU11qe60vn_540.png" data-orig-height="184" data-orig-width="488"/></figure><p>场景是希望docker容器内能跑sysvinit的同时支持docker stop，因为init进程如果在pid为1时是不会自动处理SIGTERM的，而sysvinit也没有捕获SIGTERM。</p>

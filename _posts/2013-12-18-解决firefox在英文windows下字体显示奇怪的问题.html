@@ -1,0 +1,15 @@
+---
+layout: post
+title: 解决Firefox在英文Windows下字体显示奇怪的问题
+date: '2013-12-18T09:38:22+08:00'
+tags:
+- firefox
+tumblr_url: http://blog.ayanamist.com/post/70345493503
+---
+<p>如果使用的是英文Windows XP以上系统，区域设置里，日期时间选择的是非中文的其它如英语美国，那在部分网站如Twitter上，中文字体将以很奇怪的方式渲染。</p>
+
+<p>这个问题折磨了我很久，最后找到了<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=677919" target="_blank">Firefox的一个bug</a>，里面提到了，在没有声明语言的网页中，很可能会被判断为是日文页面，从而用日文字体渲染，导致该问题的发生。</p>
+
+<p>解决方法很简单，在Firefox 8以后的版本，把优先显示的语言中，加入中文即可。</p>
+
+<p><img src="http://67.media.tumblr.com/d37624d92cd3c04eb06ea71ce444c3c6/tumblr_inline_mxzaxi3Q6O1qe60vn.png" alt="screenshot"/></p>

@@ -1,0 +1,18 @@
+---
+layout: post
+title: beejive小研究
+date: '2012-11-13T21:58:39+08:00'
+tags:
+- 技术
+tumblr_url: http://blog.ayanamist.com/post/35634677783
+---
+<p>某人和我反映，iPhone 4 5.1.1系统上，beejive for gtalk老掉线。根据对iOS的了解，应该是与beejive的代挂服务器连接不好。</p>
+<p>但某人出门在外，我手头也没iOS设备了，想到beejive还有Android版本，用手机装了beejive for gtalk后dump出apk来。</p>
+<p>apktools反编译，先用</p><pre><code>(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})</code></pre>正则排除一下变态厂商用ip直连的情况，然后直接搜<pre><code>.com</code></pre>果然搜出几个疑似目标
+<pre>a-1.beejive.com
+a-2.beejive.com
+a-gt-1.beejive.com
+a-gt-2.beejive.com</pre>
+<p>ping了一下这几个地址，电信的延迟都在650ms左右，这还是ADSL的结果，在移动网络下肯定更慢。顺带ping了下www.beejive.com的首页，也差不多。再在某美国VPS上ping了下，才5ms……</p>
+<p>解决方法很简单，让这些都走代理就可以了</p>
+<p>顺便好奇，在这些关键字附近上下瞟了瞟，发现原来这公司还针对不同的市场build了不同的版本，其中对Amazon的版本还是无广告的。还有个Vodafone版，不过没啥好处，就是关于界面多写几个字而已</p>

@@ -1,0 +1,16 @@
+---
+layout: post
+title: Ubuntu下绑定Alt+PrtScr
+date: '2016-03-09T13:12:26+08:00'
+tags:
+- ubuntu
+- linux
+tumblr_url: http://blog.ayanamist.com/post/140728012456
+---
+<p>如果你一不小心在Keyboard-Shortcuts里取消了这个快捷键，会发现无法再绑定回去了。</p>
+
+<p>解决办法是：临时开个终端，然后</p>
+
+<p><code>sudo bash -c "echo 0 &gt; /proc/sys/kernel/sysrq"</code></p>
+
+<p>临时禁用sysrq，就可以再绑定了</p>

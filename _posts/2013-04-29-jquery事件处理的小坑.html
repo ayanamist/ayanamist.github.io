@@ -1,0 +1,15 @@
+---
+layout: post
+title: jQuery事件处理的小坑
+date: '2013-04-29T12:10:22+08:00'
+tags:
+- 技术
+- jQuery
+- javascript
+tumblr_url: http://blog.ayanamist.com/post/49156202256
+---
+<p>在给Twitter写UserScript，不想用MutationObserver，因为总觉得这个东西会很影响性能。而Twitter的UI框架<a href="https://github.com/twitter/flight" target="_blank">Flight</a>又是事件驱动的，因此想到利用Twitter自己的UI事件来hook进去。</p>
+<p>但无论怎么addEventListener，都无法捕获信息，读了源代码，确定有个自定义事件是从里面的li冒泡到外面的div，但是在中间的DOM节点就是截获不到事件。被迫利用Chrome开发者工具的单步运行，一点点看它自身的事件机制，发现其使用的jQuery在事件处理上是重新发明了一套轮子。</p>
+<p>具体而言，$.on不仅仅是addEventListener这么简单，它同时把相关处理用$.data保存起来（关于DOM节点的数据都存在$.data中）。当$.event.trigger的时候，并没有利用DOM3开始支持的<a href="https://developer.mozilla.org/en-US/docs/DOM/Event/CustomEvent" target="_blank">CustomEvent</a>，而是js生成了bubble path其中包含从window、document到target节点的所有DOM元素，然后挨个触发相应的jQuery handler和native handler。最后利用DOMNode.click()触发默认行为。</p>
+<p>问题就在这最后一步的行为比较有迷惑性，因为从一个沙盒中$.trigger(&ldquo;click&rdquo;)的时候，能激活另外一个沙盒里对应的行为，而两者的事件处理并不是共享的（$.data不同）。原因在于DOMNode.click原生方法（显示为native code）会触发click事件，而这个click事件是会正常冒泡的。但对于自定义事件，不存在对应的原生方法触发事件冒泡，因此整个trigger和on就在该沙盒内的jQuery对象内部完成，不对外广播事件。</p>
+<p>因此要hook进来，必须向该沙盒注入代码调用该沙盒的jQuery对象，从而参与到其内部的事件处理机制，并向外广播。</p>

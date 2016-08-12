@@ -1,0 +1,25 @@
+---
+layout: post
+title: cygwin下安装oh-my-cygwin后的问题
+date: '2014-06-07T00:10:16+08:00'
+tags:
+- cygwin
+- windows
+- linux
+tumblr_url: http://blog.ayanamist.com/post/87994728496
+---
+<p>安装<a href="https://github.com/haithembelhaj/oh-my-cygwin" target="_blank">oh-my-cygwin</a>后遇到如下问题：</p>
+
+<blockquote>
+  <p>add-zsh-hook () {
+  &hellip;.
+  compdef: unknown command or service: git</p>
+</blockquote>
+
+<p>即遇到了<a href="https://github.com/haithembelhaj/oh-my-cygwin/issues/1" target="_blank">这个issue</a>，请按以下步骤</p>
+
+<ol><li>执行<code>rm -f ~/.zcompdump; compinit</code> <a href="https://github.com/haithembelhaj/oh-my-cygwin/issues/1#issuecomment-23283567" target="_blank">ref</a></li>
+<li>执行<code>cp ~/.zcompdump .zcompdump-$(hostname)-5.0.2</code> <a href="https://github.com/haithembelhaj/oh-my-cygwin/issues/1#issuecomment-31081369" target="_blank">ref</a></li>
+</ol><p>关闭terminal再开即可。</p>
+
+<p>多说两句，现在的cygwin比几年前我用的时候强太多了，默认的terminal已经可以复制粘贴文本了，而且也不会让python判断不到tty而卡住。代替一些*nix日常操作足够了。</p>

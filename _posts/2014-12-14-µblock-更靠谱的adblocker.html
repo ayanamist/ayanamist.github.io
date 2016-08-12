@@ -1,0 +1,20 @@
+---
+layout: post
+title: µBlock - 更靠谱的AdBlocker
+date: '2014-12-14T17:48:03+08:00'
+tags:
+- chrome
+- adblock
+- adblockplus
+- µblock
+tumblr_url: http://blog.ayanamist.com/post/105163583501
+---
+<p>最近经常要打开一些结构很复杂的页面，然后Chrome经常要渲染半天才能出来，然后想到了Hacker News上对Adblocker Plus抨击的<a href="https://news.ycombinator.com/item?id=7743064" target="_blank">报道</a>。</p>
+
+<p>于是搜了一下Chrome上另一个AdBlocker，发现更加不靠谱，还会<a href="https://news.ycombinator.com/item?id=8102584" target="_blank">偷偷发送用户数据</a>。</p>
+
+<p>于是想到了Hacker News下提到的<a href="https://github.com/gorhill/httpswitchboard" target="_blank">HTTP Switchboard</a>，发现这货现在已经支持ABP规则中隐藏页面元素的规则了，然后又发现已经由原作者分裂成两个项目<a href="https://github.com/gorhill/uBlock" target="_blank">µBlock</a>和<a href="https://github.com/gorhill/uMatrix" target="_blank">µMatrix</a>。</p>
+
+<p>于是试用了下µBlock，还是拿Mozilla举例的那个400个iframe的<a href="http://vimcolorschemetest.googlecode.com/svn/html/index-c.html" target="_blank">页面</a>来做测试，果然好很多，不开µBlock的内存占用是460MiB，开的是680MiB，ABP就不用参与对比了呵呵呵。不过对渲染的影响依旧很大，不开的情况下，Tab图标停止转圈圈时，整个页面内容都渲染好了，但开启时，往下滚动到底，还是要等一段时间才能渲染出来（不过内存占用并未增加）。考虑到ABP规则中有大量的垃圾规则，这也没有办法，也许自己重新创建一个项目重新创建规则，性能会更好。</p>
+
+<p>PS：发现TamperMonkey对内存占用也功不可没啊，开了TM，那个页面内存暴涨到880MiB，呵呵呵。</p>

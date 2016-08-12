@@ -1,0 +1,25 @@
+---
+layout: post
+title: Firefox原生的自动UserAgent切换
+date: '2013-08-22T11:48:00+08:00'
+tags:
+- firefox
+- user agent switcher
+tumblr_url: http://blog.ayanamist.com/post/58978901764
+---
+<p>傻逼Mozilla说<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=896114" target="_blank">这个特性会在6000个图片的页面带来9%的时间开销</a>，于是<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=933959" target="_blank">把整个功能代码干掉了，而不是默认关闭这个特性</a>，呵呵呵。</p>
+
+<del>
+<p>不算太垃圾的工行对Firefox的支持居然有版本限制，而且居然限制的是最高版本（目前是限制在21.0以下），以前每次都是手动的改</p>
+<pre>general.useragent.override</pre>
+<p>今天在about:config里搜useragent才发现多了个</p>
+<pre>general.useragent.site_specific_overrides</pre>
+<p>看着名字就觉得可能和我的需求有关系，于是搜了一下，发现了来源的那个内容。</p>
+<p>简言之，就是把</p>
+<pre>general.useragent.site_specific_overrides</pre>
+<p>设为true以后，再添加一个string类型的</p>
+<pre>general.useragent.override.[域名]</pre>
+<p>值内容是需要修改为的useragent。例如我设的就是</p>
+<pre>general.useragent.override.icbc.com.cn</pre>
+<p>然后用了20.0的useragent，然后就成功打开了工行的支付页面～</p>
+</del>
