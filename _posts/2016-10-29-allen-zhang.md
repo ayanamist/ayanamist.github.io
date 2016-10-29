@@ -3,8 +3,7 @@ layout: post
 title: 张小龙最新内部演讲：警惕KPI和流程，支持内部轮岗
 ---
 
-先附上完整链接，我就不全文转载了
-http://mp.weixin.qq.com/s?__biz=MTEwNTM0ODI0MQ==&mid=2653433601&idx=1&sn=2161fe43dd4d66e64685f139b11a70f3&chksm=72013eff4576b7e9a62467834242ed1b23b33d04a4924e757dcde469daf4d5679905e674d01e&scene=0#wechat_redirect
+先附上[原文链接](http://mp.weixin.qq.com/s?__biz=MTEwNTM0ODI0MQ==&mid=2653433601&idx=1&sn=2161fe43dd4d66e64685f139b11a70f3&chksm=72013eff4576b7e9a62467834242ed1b23b33d04a4924e757dcde469daf4d5679905e674d01e&scene=0#wechat_redirect)，我就不全文转载了
 
 微信我一直是不太喜欢的，太多的细节设计为了所谓的简洁而牺牲效率。但张小龙作为这样一个产品的缔造者，我还是很钦佩的，包括之前的Foxmail、QQ邮箱，都是我很喜欢的产品。
 
