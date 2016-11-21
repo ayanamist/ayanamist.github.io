@@ -22,4 +22,4 @@ Update:
 
 上面其实不是最好的办法，最标准的姿势，应该是`go build`中指定`-tags 'netcgo'`，按照[src/net/conf_netcgo.go](https://golang.org/src/net/conf_netcgo.go)中的指定，就会在编译期就使用cgo resolver。
 
-但这会带来另外一个问题，公司里用的是魔改RHEL5，内核上到2.6.32了，但默认的gcc还停留在4.1，按照[golang/go#9520](https://github.com/golang/go/issues/9520)的描述，会导致编译错误，解决方法是修改golang的源代码，将[src/cmd/go/build.go](https://golang.org/src/cmd/go/build.go#L3630)的`disableBuildID`方法内容，按上面的注释，从`"-Wl,--build-id=none"`修改为`"-r"`，然后重新编译出`go`可执行文件并替换，注意根据[文档](https://golang.org/doc/install/source#environment)指示设定`$GOROOT_FINAL`变量。
+但这会带来另外一个问题，公司里用的是魔改RHEL5，内核上到2.6.32了，但默认的gcc还停留在4.1，按照[golang/go#9520](https://github.com/golang/go/issues/9520)的描述，会导致编译错误，解决方法是修改golang的源代码，将[src/cmd/go/build.go](https://golang.org/src/cmd/go/build.go#L3630)的`disableBuildID`方法内容，按上面的注释，从`"-Wl,--build-id=none"`修改为`"-r"`，然后重新编译出`go`可执行文件并替换，注意根据[文档](https://golang.org/doc/install/source#environment)指示设定`$GOROOT_FINAL`变量并使用RHEL5平台进行编译，否则syscall可能无法对齐。
