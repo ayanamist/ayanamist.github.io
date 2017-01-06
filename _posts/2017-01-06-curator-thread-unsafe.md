@@ -1,17 +1,17 @@
 ---
 layout: post
-title: Apache CuratorµÄÒ»´¦¾­µäµÄÏß³Ì²»°²È«ÎÊÌâ
+title: Apache Curatorçš„ä¸€å¤„ç»å…¸çš„çº¿ç¨‹ä¸å®‰å…¨é—®é¢˜
 ---
 
-ÏÈ¿´´úÂë½ØÍ¼
+å…ˆçœ‹ä»£ç æˆªå›¾
 
 ![screenshot](/img/2017-01-06_140232.png)
 
-`semaphore.acquire`»áÔÚ`lease.close`ºó·µ»Ø£¬·µ»Øºó£¬Í¬Ê±ÓĞÁ½¸öÏß³Ì¶¼ÔÚ¶Ô`this.lease`±äÁ¿½øĞĞĞŞ¸Ä£¬ËùÒÔÍâÃæµÄ`acquire`·½·¨ÔÚ·µ»Ø`true`Ê±£¬`this.lease`±äÁ¿ÓĞ¿ÉÄÜÊÇ`null`µÄ£¡£¡£¡
+`semaphore.acquire`ä¼šåœ¨`lease.close`åè¿”å›ï¼Œè¿”å›åï¼ŒåŒæ—¶æœ‰ä¸¤ä¸ªçº¿ç¨‹éƒ½åœ¨å¯¹`this.lease`å˜é‡è¿›è¡Œä¿®æ”¹ï¼Œæ‰€ä»¥å¤–é¢çš„`acquire`æ–¹æ³•åœ¨è¿”å›`true`æ—¶ï¼Œ`this.lease`å˜é‡æœ‰å¯èƒ½æ˜¯`null`çš„ï¼ï¼ï¼
 
-ÓÚÊÇÔÚ½ÓÏÂÀ´µÄ`release`Ê±ÊÇÎŞ·¨°ÑÖ®Ç°»ñÈ¡µ½µÄ`lease`¶ÔÏó½øĞĞ`lease.close`µÄ£¬Õâ¸öËøÓÀÔ¶µÄ¶ªÁË¡£
+äºæ˜¯åœ¨æ¥ä¸‹æ¥çš„`release`æ—¶æ˜¯æ— æ³•æŠŠä¹‹å‰è·å–åˆ°çš„`lease`å¯¹è±¡è¿›è¡Œ`lease.close`çš„ï¼Œè¿™ä¸ªé”æ°¸è¿œçš„ä¸¢äº†ã€‚
 
-Õâ¸öÎÊÌâÔÚ×îĞÂµÄcurator-recipesÉÏ¶¼ÒÀ¾É´æÔÚ£ºhttps://github.com/apache/curator/blob/master/curator-recipes/src/main/java/org/apache/curator/framework/recipes/locks/InterProcessSemaphoreMutex.java
+è¿™ä¸ªé—®é¢˜åœ¨æœ€æ–°çš„curator-recipesä¸Šéƒ½ä¾æ—§å­˜åœ¨ï¼šhttps://github.com/apache/curator/blob/master/curator-recipes/src/main/java/org/apache/curator/framework/recipes/locks/InterProcessSemaphoreMutex.java
 
 ```
 <dependency>
@@ -21,10 +21,10 @@ title: Apache CuratorµÄÒ»´¦¾­µäµÄÏß³Ì²»°²È«ÎÊÌâ
 </dependency>
 ```
 
-ĞŞ¸ÄµÄ·½·¨ºÜ¼òµ¥£¬ÏÈÉÏ´úÂë£º
+ä¿®æ”¹çš„æ–¹æ³•å¾ˆç®€å•ï¼Œå…ˆä¸Šä»£ç ï¼š
 
 ![screenshot](/img/2017-01-06_150339.png)
 
-×¢Òâµ½£¬ÎÒÏÈ°Ñ`this.lease`±äÎª¾Ö²¿±äÁ¿£¬È»ºóÁ¢¿Ì°Ñ`this.lease`ÉèÎª`null`ÊÍ·Åµô£¬½Ó×ÅÔÙÈ¥µ÷ÓÃ`lease.close`£¬ÕâÑù`this.lease`Õâ¸ö±äÁ¿¾ÍÊ¼ÖÕÖ»ÓĞÒ»¸öÏß³ÌÔÚĞŞ¸Ä£¬Ïß³Ì°²È«ÁË¡£
+æ³¨æ„åˆ°ï¼Œæˆ‘å…ˆæŠŠ`this.lease`å˜ä¸ºå±€éƒ¨å˜é‡ï¼Œç„¶åç«‹åˆ»æŠŠ`this.lease`è®¾ä¸º`null`é‡Šæ”¾æ‰ï¼Œæ¥ç€å†å»è°ƒç”¨`lease.close`ï¼Œè¿™æ ·`this.lease`è¿™ä¸ªå˜é‡å°±å§‹ç»ˆåªæœ‰ä¸€ä¸ªçº¿ç¨‹åœ¨ä¿®æ”¹ï¼Œçº¿ç¨‹å®‰å…¨äº†ã€‚
 
-ÎÊÌâ¼°Ïà¹Ø²¹¶¡ÒÑ¾­±¨¸æ¸øÉçÇø£ºhttps://issues.apache.org/jira/browse/CURATOR-376
+é—®é¢˜åŠç›¸å…³è¡¥ä¸å·²ç»æŠ¥å‘Šç»™ç¤¾åŒºï¼šhttps://issues.apache.org/jira/browse/CURATOR-376
