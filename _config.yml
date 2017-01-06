@@ -39,3 +39,4 @@ incremental: false
 highlighter: rouge
 gist:
    noscript: false
+encoding: UTF-8
