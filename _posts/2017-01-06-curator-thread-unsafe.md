@@ -11,7 +11,7 @@ title: Apache Curator的一处经典的线程不安全问题
 
 于是在接下来的`release`时是无法把之前获取到的`lease`对象进行`lease.close`的，这个锁永远的丢了。
 
-这个问题在最新的curator-recipes上都依旧存在：https://github.com/apache/curator/blob/master/curator-recipes/src/main/java/org/apache/curator/framework/recipes/locks/InterProcessSemaphoreMutex.java
+这个问题在最新的curator-recipes上都依旧存在：[InterProcessSemaphoreMutex.java](https://github.com/apache/curator/blob/master/curator-recipes/src/main/java/org/apache/curator/framework/recipes/locks/InterProcessSemaphoreMutex.java)
 
 ```
 <dependency>
@@ -27,4 +27,4 @@ title: Apache Curator的一处经典的线程不安全问题
 
 注意到，我先把`this.lease`变为局部变量，然后立刻把`this.lease`设为`null`释放掉，接着再去调用`lease.close`，这样`this.lease`这个变量就始终只有一个线程在修改，线程安全了。
 
-问题及相关补丁已经报告给社区：https://issues.apache.org/jira/browse/CURATOR-376
+问题及相关补丁已经报告给社区：[CURATOR-376](https://issues.apache.org/jira/browse/CURATOR-376)
