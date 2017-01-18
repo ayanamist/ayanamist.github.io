@@ -36,6 +36,6 @@ func main() {
 
 这个行为应该是非常罕见的设计，因为其它带gc的语言，这种情况往往会出现fd泄漏。在Google搜了下，也有人[遇到了类似的网络连接被关闭](http://blog.csdn.net/wang_xijue/article/details/52013262)的情况。
 
-原来golang也有个类似java的finalizer的设计，可以通过`runtime.SetFinalizer`进行注册，在golang标准库里，打开的文件、网络连接、进程都会被注册上finalizer在gc时进行释放。
+原来golang也有个类似java的finalizer的设计，可以通过`runtime.SetFinalizer`进行注册，在golang标准库里搜索了一下，各个平台上打开的文件、网络连接、进程都会被注册上finalizer在gc时进行释放。
 
 这个设计比较考虑低级错误，但对有意的fd释放，就只好显式的加一个变量保持引用了。
