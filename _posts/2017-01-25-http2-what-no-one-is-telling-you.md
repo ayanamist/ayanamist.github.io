@@ -22,3 +22,7 @@ title: 关于HTTP2，你所不了解的东西
 2. 这个压缩也是per connection的，因此每一个新连接都要从头开始。
 3. RFC的描述比较含糊导致实现上可以像[这篇论文](https://www.imperva.com/docs/Imperva_HII_HTTP2.pdf)里提到的创建一个超大header然后疯狂引用这个header导致服务端在应对极少的请求时因为解压缩而耗费巨大内存；事实上这篇论文里还有一些其它有意思的针对H2各个实现的攻击，我前面的[文章](/2017/01/07/golang-h2-memory.html)也提到golang的实现导致内存消耗会非常的大，实现上的问题只能靠时间来解决了。
 4. 最后一点提到无法关闭hpack，会导致pipelining无法使用，这个我没太明白，speaker没细说，我也没搜到这方面的文章。
+
+接下来谈到Priority的设计，主要还是一个suggest，提到了Firefox做的非常智能，把各个资源的依赖关系都充分用priority体现出来了，而Chrome 53则做的没那么好，Edge更糟一些。
+
+最后介绍了一些小工具和书，Q&A部分听不太清楚问题，所以也没仔细看了。
