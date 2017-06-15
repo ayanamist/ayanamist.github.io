@@ -16,3 +16,13 @@ title: 匪夷所思的golang程序panic
 对应的golang代码是：
 
 ![screenshot](/img/2017-06-01_201630.jpg)
+
+Update on 2017-06-15 继续记录奇奇怪怪的panic
+
+panic的栈如下图
+
+![screenshot](/img/2017-06-15_094934.png)
+
+对应go代码如下图，除了内存坏了，我是找不到其它导致`panic runtime error: integer divide by zero`的原因
+
+![screenshot](/img/2017-06-15_094958.png)
