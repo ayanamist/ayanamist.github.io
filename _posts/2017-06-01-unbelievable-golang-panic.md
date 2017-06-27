@@ -26,3 +26,13 @@ panic的栈如下图
 对应go代码如下图，除了内存坏了，我是找不到其它导致`panic runtime error: integer divide by zero`的原因
 
 ![screenshot](/img/2017-06-15_094958.png)
+
+Update on 2017-06-27
+
+panic的栈如下图，挂在strconv.ParseInt里
+
+![screenshot](/img/2017-06-27_183111.png)
+
+对应代码位置，看起来是str部分被破坏了，当然没用unsafe的东西乱改啦
+
+![screenshot](/img/2017-06-27_183224.png)
