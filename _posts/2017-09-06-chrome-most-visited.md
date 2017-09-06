@@ -10,5 +10,3 @@ title: Chrome的新建标签页上删除“最常访问”
 搜来搜去，找到了[这里](https://www.sitepoint.com/community/t/editing-google-chromes-style-file/206881/4)的建议：
 
 用十六进制编辑器修改resources.pak文件，搜索`#most-visited`，把后面的内容替换成`display: none;`，多出来的字符用空格覆盖。这样就默认隐藏了。
-
-还有另一种办法，是直接使用Chromium版本，[这里](https://chromium.woolyss.com/)这里有个列表，其中提供Chromium Stable Portable的是[chrlauncher](https://www.henrypp.org/product/chrlauncher)，也可以尝试
