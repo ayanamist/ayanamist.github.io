@@ -13,5 +13,5 @@ title: Chrome的新建标签页上删除“最常访问”
 
 多尝试了一下，可以通过修改两处，完整的去掉NTP内容但保留书签栏：
 
-1. 修改chrome.dll，搜索`_/chrome/newtab`，将整个字符串改为`about:blank`，不足的地方用0x00补足。这样可以禁止Chrome从Google服务器上加载NTP
+1. 修改chrome.dll，搜索`{google:baseURL}_/chrome/newtab`，将整个字符串改为`about:blank`，不足的地方用0x00补足。这样可以禁止Chrome从Google服务器上加载NTP
 2. 修改resources.pak，搜索`<link rel="stylesheet" href="chrome-search://local-ntp/local-ntp.css"></link>`修改为`<style>body{display:none;}</style>`，这样完全禁止本地NTP的显示。
