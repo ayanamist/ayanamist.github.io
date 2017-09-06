@@ -11,7 +11,7 @@ title: Chrome的新建标签页上删除“最常访问”
 
 用十六进制编辑器修改resources.pak文件，搜索`#most-visited`，把后面的内容替换成`display: none;`，多出来的字符用空格覆盖。这样就默认隐藏了。
 
-多尝试了一下，可以通过修改两处，完整的去掉NTP内容但保留书签栏：
+多尝试了一下，可以通过修改resources.pak两处，完整的去掉NTP内容但保留书签栏：
 
-1. 修改chrome.dll，搜索`{google:baseURL}_/chrome/newtab`，将整个字符串改为`about:blank`，不足的地方用0x00补足。这样可以禁止Chrome从Google服务器上加载NTP
-2. 修改resources.pak，搜索`<link rel="stylesheet" href="chrome-search://local-ntp/local-ntp.css"></link>`修改为`<style>body{display:none;}</style>`，这样完全禁止本地NTP的显示。
+1. 搜索`chrome-search://local-ntp/local-ntp.js`，将整个字符串替换为空格。这样可以禁止Chrome从Google服务器上加载NTP。
+2. 搜索`<link rel="stylesheet" href="chrome-search://local-ntp/local-ntp.css"></link>`修改为`<style>body{display:none;}</style>`，不足的地方用空格补足，这样完全禁止本地NTP的显示。
