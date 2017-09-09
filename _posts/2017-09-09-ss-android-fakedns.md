@@ -32,7 +32,7 @@ iOS上surge的[fakedns的方案](https://trello.com/c/AFX8ht38)非常好，毕�
 3. 由于golang的限制，按[这里的方法](https://github.com/golang/go/issues/21820#issuecomment-328281230)新建文件，然后重新编译标准库`go install -v net`
 4. `go install -v -ldflags="-extldflags=-pie" github.com/ayanamist/go-shadowsocks2`，将文件改名为libss-local.so，替换到apk包的lib/arm64-v8a目录下
 5. 编写一个空壳文件liboverture.so，也替换到apk中，屏蔽掉原本的overture，dns功能由新的go-ss2程序提供
-    ```bash
+    ```
     #!/system/bin/sh
     exec sleep 10000000
     ```
