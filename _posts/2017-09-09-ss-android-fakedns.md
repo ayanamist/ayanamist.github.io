@@ -49,4 +49,4 @@ iOS上surge的[fakedns的方案](https://trello.com/c/AFX8ht38)非常好，毕�
     可以访问[www.taobao.com](https://www.taobao.com/)看是否会被重定向到国际版，原来的DNS转发由于服务器一般在国外，会解析出国外的IP导致访问国际版页面。
 6. 由于本人使用MIUI，因此不需要流量速度显示，因此没有实现这部分。
 
-最后附一个ss-android_v4.1.8的fakedns版：[apk下载](https://github.com/ayanamist/ayanamist.github.io/releases/download/ss-android-fakedns_v4.1.8/Shadowsocks_v4.1.8_fakedns.apk)
+最后附一个ss-android_v4.1.8的fakedns版，注意只替换了arm64：[apk下载](https://github.com/ayanamist/ayanamist.github.io/releases/download/ss-android-fakedns_v4.1.8/Shadowsocks_v4.1.8_fakedns.apk)
