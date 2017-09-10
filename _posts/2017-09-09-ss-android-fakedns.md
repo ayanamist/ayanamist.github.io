@@ -30,7 +30,7 @@ iOS上surge的[fakedns的方案](https://trello.com/c/AFX8ht38)非常好，毕�
     GOARCH=arm64
     ```
 3. 由于golang的限制，按[这里的方法](https://github.com/golang/go/issues/21820#issuecomment-328281230)新建文件，然后重新编译标准库`go install -v net`
-4. `go install -v -ldflags="-extldflags=-pie" github.com/ayanamist/go-shadowsocks2`，将文件改名为libss-local.so，替换到apk包的lib/arm64-v8a目录下
+4. `go install -v github.com/ayanamist/go-shadowsocks2`，将文件改名为libss-local.so，替换到apk包的lib/arm64-v8a目录下
 5. 编写一个空壳文件liboverture.so，也替换到apk中，屏蔽掉原本的overture，dns功能由新的go-ss2程序提供
     ```
     #!/system/bin/sh
@@ -41,7 +41,7 @@ iOS上surge的[fakedns的方案](https://trello.com/c/AFX8ht38)非常好，毕�
 
 使用的注意事项：
 1. 需要fakedns的，用ss-android的自定义规则，将域名添加进去，符合规则的都会走fakedns，无法关闭
-2. 需要禁用DNS转发，否则DNS请求无法转到go-ss2进程上
+2. 需要禁用DNS转发，go-ss2不支持udp-relay，所以开启DNS转发的话会无法解析
 3. 建议将路由设置为“绕过局域网及中国”获得更好体验
 4. 不支持IPv6
 5. go-ss2内置成114DNS，android上设置的远端DNS无效。事实上原始版本，如果不开DNS转发，也是走114和dnspod
