@@ -46,10 +46,10 @@ you have called .close() on any active streaming result sets before attempting m
 
 然而，我们公司的jdbcUrl是远程推送下来的，并没有办法改，当然换成mybatis也是可以的，但这个jdbcTemplate有点特殊，当初就是要和已有的mybatis隔离开，才用jdbcTemplate来处理的。于是得找找别的解决方案。
 
-把整个链路都翻了一遍，公司提供的DataSource没有任何接口可以修改url参数，mysql-connector也没有，但用到的[druid](https://github.com/alibaba/druid)连接池似乎有filter的能力，而且从断点的栈来看，也是在filter里调用到了判断大小写敏感的地方，最终调用到了问题代码。
+把整个链路都翻了一遍，公司提供的DataSource没有任何接口可以修改url参数，mysql-connector也没有，但用到的[druid](https://github.com/alibaba/druid)连接池似乎有filter的能力，而且从断点的栈来看，也是在filter里调用到了判断大小写敏感的地方，最终调用到了问题代码，而且filter可以通过System.properties里选择使用哪些filter。
 
 ![screenshot](/img/2017-09-22_131529.png)
 
-而且filter可以通过System.properties里选择使用哪些filter，那就简单了，在web.xml里新增一个listener，在这个listener里设置一下`System.setProperty("druid.filters", "com.company.DruidMetaDataCaseInsensitiveFilter");`，创建对应的Filter类继承com.alibaba.druid.filter.FilterAdapter，并覆盖resultSetMetaData_isCaseSensitive方法，让其始终返回false（用到的数据库是ci的），再发布一次，果然在spring-jdbc 4.3.11和streaming场景下也不报错了。
+那就简单了，在web.xml里新增一个listener，在这个listener里设置一下`System.setProperty("druid.filters", "com.company.DruidMetaDataCaseInsensitiveFilter");`，创建对应的Filter类继承com.alibaba.druid.filter.FilterAdapter，并覆盖resultSetMetaData_isCaseSensitive方法，让其始终返回false（用到的数据库是ci的），再发布一次，果然在spring-jdbc 4.3.11和streaming场景下也不报错了。
 
 
