@@ -37,4 +37,6 @@ panic的栈如下图，挂在strconv.ParseInt里
 
 ![screenshot](/img/2017-06-27_183224.png)
 
+Update on 2017-10-12
+
 `make(map[string][]string)`时报integer divide by zero: goroutine 13 [running]
