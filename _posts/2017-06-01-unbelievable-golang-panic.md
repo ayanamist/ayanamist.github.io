@@ -36,3 +36,5 @@ panic的栈如下图，挂在strconv.ParseInt里
 对应代码位置，看起来是str部分被破坏了，当然没用unsafe的东西乱改啦
 
 ![screenshot](/img/2017-06-27_183224.png)
+
+`make(map[string][]string)`时报integer divide by zero: goroutine 13 [running]
