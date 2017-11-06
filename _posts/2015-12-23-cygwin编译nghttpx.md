@@ -21,7 +21,7 @@ tumblr_url: http://blog.ayanamist.com/post/135758773486
 
 `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig`
 
-防止找不到spdylay。
+防止找不到依赖。
 
 编译后配置文件可以为
 
