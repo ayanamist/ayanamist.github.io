@@ -15,7 +15,7 @@ tumblr_url: http://blog.ayanamist.com/post/135758773486
 
 先按[这里](http://stackoverflow.com/a/27389613/522024)把FD_SETSIZE调大，否则会经常出现莫名其妙的连接不上的问题。
 
-编译主要[这里](https://nghttp2.org/documentation/package_README.html#building-from-git)，注意文档中提示的[几个点](https://nghttp2.org/documentation/package_README.html#notes-for-building-on-windows-mingw-cygwin)。
+编译主要[这里](https://nghttp2.org/documentation/package_README.html#building-from-git)，注意文档中提示的[几个点](https://nghttp2.org/documentation/package_README.html#notes-for-building-on-windows-mingw-cygwin)。编译参数和顺序可以参照[这个脚本](https://github.com/ayanamist/nghttp2-static-docker/blob/master/build.sh)。
 
 <del>而编译nghttp时则有[两个小坑](https://github.com/tatsuhiro-t/nghttp2/issues/108#issuecomment-166802587)</del>其中一个问题已修正，同时提交的[一个PR](https://github.com/tatsuhiro-t/nghttp2/pull/461)也合并了；另一个则是需要注意设置</p>
 
