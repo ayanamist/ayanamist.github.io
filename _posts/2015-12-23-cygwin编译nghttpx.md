@@ -23,6 +23,8 @@ tumblr_url: http://blog.ayanamist.com/post/135758773486
 
 防止找不到依赖。
 
+编译时在新的g++ 6.x上可能遇到报错，需要按[这里](https://stackoverflow.com/a/46855224/522024)修改CFLAGS。
+
 编译后配置文件可以为
 
 ```
