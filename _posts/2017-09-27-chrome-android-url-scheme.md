@@ -11,4 +11,4 @@ title: Chrome Android上智能跳转app
 
 传统的用`setInterval`加`setTimeout`的方式不灵了，至少在头几秒里setInterval还是会在切后台后正常运行。而html5 visibility相关api即使弹出app后也依然会显示visible，测了半天，似乎只有注册blur事件，才能感知到离开页面。
 
-我自己的需求比较简单，负责页面的话，可以在跳转前赋值个flag，然后blur检测这个flag防止误伤。
+我自己的需求比较简单，复杂页面的话，可以在跳转前赋值个flag，然后blur检测这个flag防止误伤。
