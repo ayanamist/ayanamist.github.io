@@ -44,3 +44,7 @@ Update on 2017-10-12
 Update on 2017-12-06
 
 看到[这篇文章](https://marcan.st/2017/12/debugging-an-evil-go-runtime-bug/)，是内存在高温下有一个bit反转了导致的问题，怀疑上面也是类似的问题，可惜出问题的机器都不是我的也没有条件接触硬件跑memtest。所以这篇文章可以大概定性，后续不再更新。
+
+Update on 2019-11-06
+
+这里有一个曲折排查最后确认是内存问题的记录 https://marcan.st/2017/12/debugging-an-evil-go-runtime-bug/
