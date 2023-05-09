@@ -11,19 +11,19 @@ title: k8s client-go内存优化
 
 这里先写一个简单的小程序，用ResourceVersion=0全量拉取所有Pod，默认参数下
 
-![](../img/2022-10-28-16-24-24.png)
+![](/img/2022-10-28-16-24-24.png)
 
 接着加上protobuf：使用 [metadata.ConfigFor](https://pkg.go.dev/k8s.io/client-go/metadata@v0.20.15#ConfigFor) 进行配置
 
-![](../img/2022-10-28-16-25-52.png)
+![](/img/2022-10-28-16-25-52.png)
 
 这个函数就是配置了优先使用protobuf编码
 
-![](../img/2022-10-28-16-26-32.png)
+![](/img/2022-10-28-16-26-32.png)
 
 再重新拉取全量Pod
 
-![](../img/2022-10-28-16-27-18.png)
+![](/img/2022-10-28-16-27-18.png)
 
 可以发现，apiserver的响应时间，从35秒下降到13秒，拉取到的数据量也从3.4G下降到2.7G，反序列化的耗时从58秒下降到14秒，效果是非常显著的。
 
@@ -35,24 +35,24 @@ title: k8s client-go内存优化
 
 而informer最关键的就是传入的[cache.ListerWatcher](https://pkg.go.dev/k8s.io/client-go@v0.25.3/tools/cache#ListerWatcher)
 
-![](../img/2022-10-28-16-52-19.png)
+![](/img/2022-10-28-16-52-19.png)
 
 通读一遍代码或者网上找一下文章可以知道，整个informer就是通过启动的时候调用一下List获取全量数据，然后用List得到的resourceVersion启动Watch获取增量数据，将获得的的所有数据都缓存在内存中来降低对apiserver的请求压力的。
 
 而启动的这次List用的resourceVersion一定是0
 
-![](../img/2022-10-28-16-55-11.png)
+![](/img/2022-10-28-16-55-11.png)
 
 而resourceVersion=0时的语义，就是无视limit分页，一次性从apiserver的内存cache中获取全量数据（label selector和field selector还是会遵守的）
 
 但我们看`list`的实现，会发现他丫的居然是把整个请求先全部读取到内存中`r.body`再做一次全量反序列化。
 
-![](../img/2022-10-28-16-57-04.png)
-![](../img/2022-10-28-16-57-30.png)
+![](/img/2022-10-28-16-57-04.png)
+![](/img/2022-10-28-16-57-30.png)
 
 因此如果在一个超大集群，这内存占用就会蹭蹭蹭的暴涨，以asi的压测集群 asi_zjk_perf_test01 为例，里面包含了 57w 个Pod（都是伪造的），启动一个informer后
 
-![](../img/2022-10-28-17-05-54.png)
+![](/img/2022-10-28-17-05-54.png)
 
 光list完成，就花了快4分钟，同时截图中黄框里gctrace的日志出现了接近200ms的[STW停顿](https://pkg.go.dev/runtime#hdr-Environment_Variables:~:text=wall%2Dclock/CPU%20times%20for%20the%20phases%20of%20the%20GC)，最终RSS达到了惊人的74G，强制触发一次`debug.FreeOSMemory()`后释放了一半内存（37G），可想而知，为了这启动的瞬时内存翻倍，就必须常态的将内存指定到74G以上，并且运行过程中还可能因为watch断开等原因，再触发一次list，那就会在已经用了37G的基础上再叠加一个74G的临时分配，111G的内存占用浪费严重，也容易触发系统oom killer，哪怕容器会自动重启，恢复也要4分钟，可用性影响很大。
 
@@ -126,7 +126,7 @@ func startInformerFactory(ctx context.Context, client *kubernetes.Clientset) inf
 
 由于informerFactory只会对同一个对象类型保存一个informer
 
-![](../img/2022-10-28-17-53-41.png)
+![](/img/2022-10-28-17-53-41.png)
 
 因此后续依旧可以`informerFactory.Core().V1().Pods().Lister()`获取一个`lister`对象正常使用
 
@@ -136,11 +136,11 @@ func startInformerFactory(ctx context.Context, client *kubernetes.Clientset) inf
 
 按上述代码组装出`informerFactory`后，做一次`debug.FreeOSMemory`，然后将内部除了第二个以外的其他所有元素，全部替换成空Pod信息
 
-![](../img/2022-10-28-17-58-04.png)
+![](/img/2022-10-28-17-58-04.png)
 
 预期是内存会降低，因为每个Pod.Spec占用的空间都没了，但实际情况却是：
 
-![](../img/2022-10-28-18-02-34.png)
+![](/img/2022-10-28-18-02-34.png)
 
 没错，内存占用还上升了，而且GC也释放不掉！这里是把Spec和Status都清空了，如果是真实的生产环境，内存实际上是有可能翻倍的。也就是说，前面流式解析好不容易省下来的内存，最后还是会因为这个问题重新变成两倍的状态。
 
@@ -189,7 +189,7 @@ func listPod(ctx context.Context, client rest.Interface, namespace string, optio
 
 这样在源头就打断了引用关系。代码替换进去，重新测试下，可以看到由于GC次数变少了，GC时间也变短了，整体list的耗时也大幅度缩短；同时list完成后的内存占用也从前面的74G下降到40G，并且模拟update后内存是进一步下降的。
 
-![](../img/2022-10-28-20-46-24.png)
+![](/img/2022-10-28-20-46-24.png)
 
 # GC goal抬高的风险
 
@@ -201,11 +201,11 @@ func listPod(ctx context.Context, client rest.Interface, namespace string, optio
 
 这里最好能使用go1.19引入的[GOMEMLIMIT](https://pkg.go.dev/runtime/debug#SetMemoryLimit)对内存上限进行约束，否则有可能因为goal的不断提升，导致触发oom。还是在 asi_zjk_perf_test01 集群，list需要2分钟才能拿到全量pod，而这个集群每秒的modified事件有4000之多，因此2分钟几乎把大部分pod都更新了一遍，watch此时一定失败，会不停的报错 ` watch of *v1.Pod closed with: too old resource version` 然后一直用得到的resourceVersion重新list，在不设置 `GOMEMLIMIT` 的情况下，内存很快就OOM，如下图所示，第二次relist就挂了
 
-![](../img/2022-10-29-01-18-26.png)
+![](/img/2022-10-29-01-18-26.png)
 
 而设置了 `GOMEMLIMIT` 后，很好的控制住了内存消耗
 
-![](../img/2022-10-29-01-20-51.png)
+![](/img/2022-10-29-01-20-51.png)
 
 同时不用担心万一`GOMEMLIMIT`设小了怎么办，这里通过将`GOMEMLIMIT=40GiB`进行测试，依然是会使用超过40G的内存，只是GC会变的比较频繁，大概5秒就会进行一次GC。
 
